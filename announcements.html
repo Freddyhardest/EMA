@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Announcements - event details record</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: Courier;
+      }
+      div {
+        padding: 10px;
+        background-color: #f6f6f6;
+        overflow: hidden;
+      }
+      input[type="text"],
+      textarea,
+      select {
+        font-size: 18px;
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      input[type="button"] {
+        font-size: 18px;
+        width: auto;
+        float: right;
+        cursor: pointer;
+        padding: 7px;
+      }
+      a {
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>O.U. Club: Announcements</h2>
+
+    <div>
+      <input type="text" id="txtSubjectLine" placeholder="Subject Line">
+    </div>
+
+    <div>
+      <input type="text" id="txtSenderName" placeholder="Sender's Name">
+    </div>
+
+    <div>
+      <label for="fileAttachment">Select an attachment:</label>
+      <input type="file" id="fileAttachment" name="fileAttachment">
+    </div>
+
+    <div>
+      <input type="date" id="txtSendDate">
+    </div>
+
+    <!--This form allows the user to create an announcement for the O.U. Club. The user can enter the subject line, sender's name, select an attachment and choose a send date. The data entered by the user can be saved to a file by clicking the "Create Announcement" button.-->
+    <p>This form allows the user to create an announcement for the O.U. Club. The user can enter the subject line, sender's name, select an attachment and choose a send date. The data entered by the user can be saved to a file by clicking the "Create Announcement" button.</p>
+  </body>
+</html>

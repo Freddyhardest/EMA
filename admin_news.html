@@ -1,0 +1,78 @@
+<title>O.U. Club: News Items</title>
+<style type="text/css">
+    * { box-sizing: border-box; font-family: Courier; }
+    div {
+      padding: 10px;
+      background-color: #f6f6f6;
+      overflow: hidden;
+    }
+    input[type=text], textarea, select {
+      font-size: 18px;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    input[type=button]{ 
+      font-size: 18px;
+      width: auto;
+      float: right;
+      cursor: pointer;
+      padding: 7px;
+    }
+    a { color: blue; }
+</style>
+<h2>O.U. Club: News Items</h2>
+<h3>Trial web page for the Open University Walking Club.</h3>
+
+<div><input id="txtAdminName" placeholder="Admin Name" type="text" /></div>
+
+<div><input id="txtSubjectLine" maxlength="5" placeholder="Subject Line (max. 5 words)" type="text" /></div>
+
+<div><input id="txtFirstShowingDate" placeholder="First Showing Date" type="date" /> First showing date</div>
+
+<div><input id="txtLastShowingDate" placeholder="Last Showing Date" type="date" /> Last showing date</div>
+
+<div><textarea cols="50" id="txtNewsItemContent" maxlength="250" placeholder="News Item Content (max. 250 words)" rows="4"></textarea></div>
+
+<div><input onclick="addNewsItem()" type="button" value="Add News Item" /></div>
+<script>
+
+let addNewsItem = () => {
+
+// Get the data from each element on the form.
+const adminName = document.getElementById('txtAdminName');
+const subjectLine = document.getElementById('txtSubjectLine');
+const firstShowingDate = document.getElementById('txtFirstShowingDate');
+const lastShowingDate = document.getElementById('txtLastShowingDate');
+const newsItemContent = document.getElementById('txtNewsItemContent');
+
+// This variable stores all the data.
+let data =
+'\r Admin Name:' + adminName.value + '\r\n' +
+'Subject Line:' + subjectLine.value + '\r\n' +
+'First Showing Date:' + firstShowingDate.value + '\r\n' +
+'Last Showing Date:' + lastShowingDate.value + '\r\n' +
+'News Item Content:' + newsItemContent.value;
+
+// Convert the text to BLOB.
+const textToBLOB = new Blob([data], {type:'text/plain'});
+const sFileName ='newsData.txt'; // The file to save the data.
+
+let newLink=document.createElement("a");
+newLink.download=sFileName;
+
+if(window.webkitURL!=null){
+newLink.href=window.webkitURL.createObjectURL(textToBLOB);
+}
+else{
+newLink.href=window.URL.createObjectURL(textToBLOB);
+newLink.style.display='none';
+document.body.appendChild(newLink);
+}
+
+newLink.click();
+}
+
+</script>
+

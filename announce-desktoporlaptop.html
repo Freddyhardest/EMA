@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Announcements - event details record</title>
+<style>
+  * { box-sizing: border-box; font-family: Courier; }
+  div {
+    padding: 10px;
+    background-color: #f6f6f6;
+    overflow: hidden;
+  }
+  input[type=text], textarea, select {
+    font-size: 18px;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  input[type=button]{ 
+    font-size: 18px;
+    width: auto;
+    float: right;
+    cursor: pointer;
+    padding: 7px;
+  }
+  a { color: blue; }
+
+</style>
+</head>
+<body>
+<h2>O.U. Club: Announcements</h2>
+
+<div>
+<input type="text" id="txtSubjectLine" placeholder="Subject Line"/>
+</div>
+
+<div>
+<input type="text" id="txtSenderName" placeholder="Sender's Name"/>
+</div>
+
+<div>
+<label for="fileAttachment">Select an attachment:</label>
+<input type="file" id="fileAttachment" name="fileAttachment"/>
+</div>
+
+<div>
+<input type = "date" id = "txtSendDate" placeholder = "Send Date"/>
+</div>
+
+<div>
+<input type = "button" value = "Create Announcement"
+onclick = "createAnnouncement()"/>
+</div>
+
+<script>
+
+let createAnnouncement = () => {
+
+// Get the data from each element on the form.
+const subjectLine = document.getElementById('txtSubjectLine');
+const senderName = document.getElementById('txtSenderName');
+const fileAttachment = document.getElementById('fileAttachment');
+const sendDate = document.getElementById('txtSendDate');
+
+// This variable stores all the data.
+let data =
+'\r Subject Line:' + subjectLine.value + '\r\n' +
+'Sender\'s Name:' + senderName.value + '\r\n' +
+'File Attachment:' + fileAttachment.value + '\r\n' +
+'Send Date:' + sendDate.value;
+
+// Convert the text to BLOB.
+const textToBLOB = new Blob([data], {type:'text/plain'});
+const sFileName ='announcementData.txt'; // The file to save the data.
+
+let newLink=document.createElement("a");
+newLink.download=sFileName;
+
+if(window.webkitURL!=null){
+newLink.href=window.webkitURL.createObjectURL(textToBLOB);
+}
+else{
+newLink.href=window.URL.createObjectURL(textToBLOB);
+newLink.style.display='none';
+document.body.appendChild(newLink);
+}
+
+newLink.click();
+}
+
+</script>
+
+</html>
