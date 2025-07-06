@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Say Hello (Web Speech API)</title>
+</head>
+<body>
+  <button onclick="sayHello()">Say Hello</button>
+  <script>
+    function sayHello() {
+      const utterance = new SpeechSynthesisUtterance("hello");
+      window.speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>
