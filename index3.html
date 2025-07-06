@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puter.js Text-to-Speech Demo</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Puter.js Text-to-Speech Demo</h1>
+    <textarea id="textInput" placeholder="Type your text here..."></textarea>
+    <br>
+    <button id="speakButton">Speak</button>
+
+    <script>
+        document.getElementById('speakButton').addEventListener('click', function() {
+            const text = document.getElementById('textInput').value;
+            if (text) {
+                puter.ai.txt2speech(text);
+            } else {
+                alert('Please enter some text to speak.');
+            }
+        });
+    </script>
+
+</body>
+</html>
 
