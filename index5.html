@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Play.ht "Hello" Demo</title>
+</head>
+<body>
+  <h1>Play.ht Text-to-Speech Demo</h1>
+  <button id="speakBtn">Say "Hello"</button>
+  <audio id="audioPlayer" controls style="display:none;"></audio>
+  <p id="status"></p>
+
+  <script>
+    document.getElementById('speakBtn').onclick = async function() {
+      const status = document.getElementById('status');
+      status.textContent = 'Generating audio...';
+
+      // Play.ht API endpoint for TTS synthesis
+      const url = 'https://api.play.ht/api/v2/tts';
+
+      // Prepare the request payload
+      const data = {
+        text: "hello",
+        voice: "en-US-JennyNeural", // Example voice; you can change to any supported voice
+        output_format: "mp3"
+      };
+
+      try {
+        // Send POST request to Play.ht
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ak-18daf4af430244b9b320068cf78ff080',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+
+        const result = await response.json();
+
+        // Play.ht's API returns a transcriptionId; we need to poll for completion
+        const transcriptionId = result.id;
+        let audioUrl = null;
+        let attempts = 0;
+
+        while (!audioUrl && attempts < 20) {
+          await new Promise(r => setTimeout(r, 2000)); // Wait 2 seconds
+          const statusResp = await fetch(`https://api.play.ht/api/v2/tts/${transcriptionId}`, {
+            headers: {
+              'Authorization': 'Bearer ak-18daf4af430244b9b320068cf78ff080',
+              'Accept': 'application/json'
+            }
+          });
+          const statusData = await statusResp.json();
+          if (statusData.audioUrl) {
+            audioUrl = statusData.audioUrl;
+          }
+          attempts++;
+        }
+
+        if (audioUrl) {
+          const audioPlayer = document.getElementById('audioPlayer');
+          audioPlayer.src = audioUrl;
+          audioPlayer.style.display = 'block';
+          audioPlayer.play();
+          status.textContent = 'Playing audio!';
+        } else {
+          status.textContent = 'Failed to generate audio in time.';
+        }
+      } catch (err) {
+        status.textContent = 'Error: ' + err.message;
+      }
+    };
+  </script>
+</body>
+</html>
 
