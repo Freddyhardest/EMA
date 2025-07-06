@@ -395,7 +395,7 @@
             <div id="controls">
                 <button id="reset-btn">Reset Level</button>
                 <button id="solution-btn">Show Solution</button>
-                <button id="toggle-audio">Mute Audio</button> <!-- Added Audio Toggle -->
+                <button id="toggle-audio">Mute Audio</button>
             </div>
         </div>
     </div>
@@ -427,8 +427,8 @@
         const currentLevelStat = document.getElementById('current-level');
         const movesCountStat = document.getElementById('moves-count');
         const squaresVisitedStat = document.getElementById('squares-visited');
-        const toggleAudioBtn = document.getElementById('toggle-audio'); // Audio Toggle Button
-        const startButton = document.getElementById('startButton'); // Initialize Audio Button
+        const toggleAudioBtn = document.getElementById('toggle-audio');
+        const startButton = document.getElementById('startButton');
 
         let youtubePlayer;
         const youtubeVideoId = 'Q9OhNLf11b4';
@@ -477,25 +477,21 @@
                 route: [[1,1], [1,2], [2,2], [2,1], [2,0], [1,0], [0,0], [0,1], [0,2], [0,3], [1,3], [2,3], [3,3], [3,2], [3,1], [3,0]],
                 start: [1,1],
                 end: [3,0]
-            },
-            5: {
-                title: "The Tangled Maze",
-                description: "The ultimate test! This maze is designed for maximum turns and requires flawless foresight. Only true masters can guide Z to the star (3,3) here!",
-                route: [[0,0], [1,0], [1,1], [0,1], [0,2], [1,2], [1,3], [0,3], [2,3], [2,2], [3,2], [3,1], [2,1], [2,0], [3,0], [3,3]],
-                start: [0,0],
-                end: [3,3]
             }
         };
         const totalLevels = Object.keys(levelPaths).length;
         let currentSolution = null;
         let currentEndPos = null;
-        let currentLevelData = null; // Global reference for current level
+        let currentLevelData = null;
 
         // Set up Speech Synthesis Voice
         function setSpeechVoice() {
             const voices = window.speechSynthesis.getVoices();
-            // Prefer voices with 'female' or 'Google US English', else default
-            selectedVoice = voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('google us english')) || voices[0];
+            selectedVoice = voices.find(v => v.name.toLowerCase().includes('female') || v.name === 'Google US English') || voices[0];
+            // Trigger initial speech for the first level
+            if (currentLevelData && isAudioPlaying) {
+                speakRobotically(currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start"));
+            }
         }
 
         if (window.speechSynthesis) {
@@ -529,7 +525,6 @@
 
         function onYoutubePlayerReady(event) {
             console.log("YouTube player is ready");
-            // Set volume to a reasonable level
             youtubePlayer.setVolume(30);
         }
 
@@ -551,8 +546,8 @@
                 isAudioPlaying = true;
                 toggleAudioBtn.textContent = "Mute Audio";
                 showMessage("Background Audio: Active");
-                // Start speech synthesis after audio begins
-                if (currentLevelData) {
+                // Trigger speech synthesis after audio begins
+                if (currentLevelData && selectedVoice) {
                     speakRobotically(currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start"));
                 }
             }
@@ -601,6 +596,7 @@
             levelDescriptionText.textContent = currentLevelData.description;
 
             gridElement.innerHTML = '';
+            visited = [];
             for (let row = 0; row < GRID_ROWS; row++) {
                 visited[row] = [];
                 for (let col = 0; col < GRID_COLS; col++) {
@@ -634,9 +630,8 @@
 
             updateStats();
 
-            if (isAudioPlaying) {
+            if (isAudioPlaying && selectedVoice) {
                 showMessage("Background Audio: Active");
-                // Trigger speech synthesis if audio is already playing
                 speakRobotically(currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start"));
             } else {
                 showMessage('<button id="startButton">Initiate Audio</button>');
@@ -655,11 +650,10 @@
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
 
-            // Prevent clicking the start cell again unless it's the first move
             if (row === levelPaths[currentLevel].start[0] && col === levelPaths[currentLevel].start[1] && path.length === 1) return;
 
             if (visited[row][col]) {
-                speakRobotically("Square already visited! Restarting game.");
+                if (selectedVoice) speakRobotically("Square already visited! Restarting game.");
                 showMessage("Oops! You've already visited that square. Resetting...", true, 2000);
                 setTimeout(resetGame, 2000);
                 return;
@@ -668,7 +662,7 @@
             const isAdjacent = isAdjacentMove(currentPos.row, currentPos.col, row, col);
             if (!isAdjacent) {
                 if (!adjacentAlertPlayed) {
-                    speakRobotically("Move must be adjacent to current cell! Restarting game.");
+                    if (selectedVoice) speakRobotically("Move must be adjacent to current cell! Restarting game.");
                     showMessage("Invalid move! You must click an adjacent square. Resetting...", true, 2000);
                     adjacentAlertPlayed = true;
                     setTimeout(() => { adjacentAlertPlayed = false; resetGame(); }, 2000);
@@ -686,36 +680,26 @@
             currentPos = { row, col };
             updateStats();
 
-            // Victory Condition
             if (path.length === GRID_ROWS * GRID_COLS && currentPos.row === currentEndPos[0] && currentPos.col === currentEndPos[1]) {
-                speakRobotically("Zap-tastic victory!");
+                if (selectedVoice) speakRobotically("Zap-tastic victory!");
                 document.querySelector('#star').style.transform = 'scale(2)';
-                // Add flash effect to victory
                 victory.classList.add('flash');
-                // Show victory message
                 victoryMessage.textContent = currentLevel < totalLevels 
                     ? `Level ${currentLevel} Completed! Prepare for the next challenge! 🌟` 
                     : `All ${totalLevels} Levels Mastered! You are an Icosian Z Game CHAMPION! Play Again to restart.🏆`;
-                speakRobotically(currentLevel < totalLevels 
+                if (selectedVoice) speakRobotically(currentLevel < totalLevels 
                     ? `Level ${currentLevel} completed!` 
                     : "All levels mastered! You are an Icosian Z Game Champion!");
-                // Increment level or reset to 1
                 currentLevel = currentLevel < totalLevels ? currentLevel + 1 : 1;
-                // Update play again button text
                 playAgainBtn.textContent = currentLevel < totalLevels ? `Continue to Level ${currentLevel}` : "Play Again";
-                // Display victory popup
                 victory.style.display = 'block';
                 gameActive = false;
-            } 
-            // Premature reaching of star
-            else if (currentPos.row === currentEndPos[0] && currentPos.col === currentEndPos[1] && path.length < GRID_ROWS * GRID_COLS) {
-                speakRobotically("You reached the star too soon! Visit all squares first. Restarting game.");
+            } else if (currentPos.row === currentEndPos[0] && currentPos.col === currentEndPos[1] && path.length < GRID_ROWS * GRID_COLS) {
+                if (selectedVoice) speakRobotically("You reached the star too soon! Visit all squares first. Restarting game.");
                 showMessage("You reached the ⭐ too early! You need to visit all squares first. Resetting...", true, 3000);
                 setTimeout(resetGame, 3000);
-            } 
-            // No available moves left
-            else if (!hasAvailableMoves()) {
-                speakRobotically("Path blocked! Restarting game.");
+            } else if (!hasAvailableMoves()) {
+                if (selectedVoice) speakRobotically("Path blocked! Restarting game.");
                 showMessage("Oh no, you're blocked! No more valid moves. Resetting...", true, 2000);
                 setTimeout(resetGame, 2000);
             }
@@ -745,12 +729,12 @@
 
         // Speech Synthesis Function
         function speakRobotically(text) {
-            if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel(); // Cancel any ongoing speeches
+            if (!window.speechSynthesis || !selectedVoice) return;
+            window.speechSynthesis.cancel();
             let cleanedText = text.replace(/⭐/g, 'star');
             const utterance = new SpeechSynthesisUtterance(cleanedText);
-            if (selectedVoice) utterance.voice = selectedVoice;
-            utterance.pitch = 1.5; // High-pitched effect
+            utterance.voice = selectedVoice;
+            utterance.pitch = 1.5;
             utterance.rate = 1.0;
             utterance.volume = 0.8;
             window.speechSynthesis.speak(utterance);
@@ -758,7 +742,7 @@
 
         // Reset the Game to Initial State
         function resetGame() {
-            victory.classList.remove('flash'); // Remove flash class if present
+            victory.classList.remove('flash');
             initGrid();
         }
 
@@ -767,7 +751,7 @@
             if (!gameActive) return;
             gameActive = false;
             showMessage("Showing solution path...", true, 3000 + (currentSolution.length * 300));
-            speakRobotically("Solution path initiating.");
+            if (selectedVoice) speakRobotically("Solution path initiating.");
             for (let row = 0; row < GRID_ROWS; row++) {
                 for (let col = 0; col < GRID_COLS; col++) {
                     visited[row][col] = false;
@@ -787,7 +771,7 @@
                     zEl.style.left = (col * CELL_SIZE + CELL_BORDER + GRID_PADDING) + 'px';
                     index++;
                     if (index === currentSolution.length) {
-                        speakRobotically("Solution shown! Starting the level again.");
+                        if (selectedVoice) speakRobotically("Solution shown! Starting the level again.");
                         setTimeout(resetGame, 3000);
                     } else {
                         setTimeout(animateSolution, 300);
@@ -809,8 +793,7 @@
                 isAudioPlaying = true;
                 toggleAudioBtn.textContent = "Mute Audio";
                 showMessage("Background Audio: Active", true, 2000);
-                // Optionally, re-trigger speech after unmuting
-                if (currentLevelData) {
+                if (currentLevelData && selectedVoice) {
                     speakRobotically(currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start"));
                 }
             }
@@ -821,9 +804,7 @@
         resetBtn.addEventListener('click', resetGame);
         solutionBtn.addEventListener('click', showSolution);
         playAgainBtn.addEventListener('click', resetGame);
-        toggleAudioBtn.addEventListener('click', toggleAudio); // Audio Toggle Event Listener
-
-        // Event Listener for Start Audio Button
+        toggleAudioBtn.addEventListener('click', toggleAudio);
         startButton.addEventListener('click', handleStartAudio);
 
         // Initialize the game when the window loads
