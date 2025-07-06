@@ -1,1 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript Speech Synthesis Demo</title>
+</head>
+<body>
+  <h1>Text to Speech Demo</h1>
+  <label for="textToSpeak">Enter text:</label>
+  <input type="text" id="textToSpeak" value="Hello, this is a speech synthesis demo!">
+  <button onclick="speakText()">Speak</button>
 
+  <script>
+    function speakText() {
+      const text = document.getElementById('textToSpeak').value;
+      const synth = window.speechSynthesis;
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      utterance.onerror = function(event) {
+        console.error('Speech synthesis error:', event.error);
+      };
+
+      synth.speak(utterance);
+    }
+  </script>
+</body>
+</html>
