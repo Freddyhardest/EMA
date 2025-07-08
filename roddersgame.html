@@ -214,11 +214,26 @@
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 0 8px rgba(0,255,255,0.4);
             font-family: 'Orbitron', sans-serif;
+            position: relative;
         }
 
         button:hover {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(0,255,255,0.7);
+        }
+
+        button.active::after {
+            content: '(Active)';
+            font-size: 0.7em;
+            color: #0ff;
+            margin-left: 5px;
+        }
+
+        button.off::after {
+            content: '(Off)';
+            font-size: 0.7em;
+            color: #ff5555;
+            margin-left: 5px;
         }
 
         #stats {
@@ -380,12 +395,12 @@
             <div id="control-panel">
                 <h3>Controls</h3>
                 <div id="controls">
-                    <button id="reset-btn">Reset Level</button>
+                    <button id="reset-btn" class="off">Reset Level</button>
+                    <button id="reset-progress-btn" class="off">Reset Progress</button>
                     <button id="solution-btn">Show Solution</button>
                     <button id="start-stop-audio">Start Audio</button>
                     <button id="mute-unmute-audio">Mute Audio</button>
                     <button id="toggle-loop-btn">Disable Audio Loop</button>
-                    <button id="reset-progress">Reset Progress</button>
                 </div>
             </div>
         </div>
@@ -406,6 +421,7 @@
         const gridElement = document.getElementById('grid');
         const messageElement = document.getElementById('message');
         const resetBtn = document.getElementById('reset-btn');
+        const resetProgressBtn = document.getElementById('reset-progress-btn');
         const solutionBtn = document.getElementById('solution-btn');
         const victory = document.getElementById('victory');
         const victoryMessage = document.getElementById('victory-message');
@@ -419,7 +435,6 @@
         const muteUnmuteAudioBtn = document.getElementById('mute-unmute-audio');
         const toggleLoopBtn = document.getElementById('toggle-loop-btn');
         const startButton = document.getElementById('startButton');
-        const resetProgressBtn = document.getElementById('reset-progress');
 
         let youtubePlayer;
         const youtubeVideoId = 'Q9OhNLf11b4';
@@ -660,6 +675,11 @@
             saveGameState();
         }
 
+        function updateButtonStatus() {
+            resetBtn.className = gameActive ? 'off' : 'active';
+            resetProgressBtn.className = localStorage.getItem('icosianZ_autosave') ? 'off' : 'active';
+        }
+
         function updateStats() {
             currentLevelStat.textContent = currentLevel;
             movesCountStat.textContent = movesCount;
@@ -726,7 +746,7 @@
             document.querySelector(`.cell[data-row="${startPos[0]}"][data-col="${startPos[1]}"]`).classList.add('visited');
 
             updateStats();
-            updateAudioButtons();
+            updateButtonStatus();
 
             victory.style.display = 'none';
             gameActive = true;
@@ -853,6 +873,7 @@
         function resetGame() {
             victory.classList.remove('flash');
             initGrid();
+            updateButtonStatus();
         }
 
         function resetProgress() {
@@ -865,8 +886,7 @@
                 youtubePlayer.pauseVideo();
             }
             initGrid();
-            updateAudioButtons();
-            showMessage("Game progress reset.", true, 2000);
+            updateButtonStatus();
             if (selectedVoice && !isAudioMuted) speakRobotically("Game progress reset.");
         }
 
@@ -972,16 +992,17 @@
             victory.style.display = 'none';
             gameActive = true;
             adjacentAlertPlayed = false;
+            updateButtonStatus();
         }
 
         // Event Listeners
         gridElement.addEventListener('click', onCellClick);
         resetBtn.addEventListener('click', resetGame);
+        resetProgressBtn.addEventListener('click', resetProgress);
         solutionBtn.addEventListener('click', showSolution);
         startStopAudioBtn.addEventListener('click', startStopAudio);
         muteUnmuteAudioBtn.addEventListener('click', muteUnmuteAudio);
         toggleLoopBtn.addEventListener('click', toggleAudioLoop);
-        resetProgressBtn.addEventListener('click', resetProgress);
         playAgainBtn.addEventListener('click', () => {
             victory.style.display = 'none';
             initGrid();
