@@ -409,6 +409,7 @@
                     <button id="solution-btn">Show Solution</button>
                     <button id="start-stop-audio">Start Audio</button>
                     <button id="mute-unmute-audio">Mute Audio</button>
+                    <button id="toggle-loop-btn">Disable Audio Loop</button>
                     <button id="reset-progress">Reset Progress</button>
                 </div>
             </div>
@@ -442,6 +443,7 @@
         const squaresVisitedStat = document.getElementById('squares-visited');
         const startStopAudioBtn = document.getElementById('start-stop-audio');
         const muteUnmuteAudioBtn = document.getElementById('mute-unmute-audio');
+        const toggleLoopBtn = document.getElementById('toggle-loop-btn');
         const startButton = document.getElementById('startButton');
         const resetProgressBtn = document.getElementById('reset-progress');
 
@@ -463,64 +465,81 @@
         let selectedVoice = null;
         let isAudioMuted = false;
         let isAudioPlaying = false;
+        let isAudioLooping = true; // Default: audio loops
         let movesCount = 0;
 
         const levelPaths = {
             1: {
                 title: "The First Steps",
-                description: "Navigate Z from the cyan start (top-left) to the star (bottom-left) by visiting every square exactly once. A perfect warm-up!",
+                description: "Navigate Z from the cyan start (top-left) to the star (bottom-left) by visiting every square exactly once. A perfect warm-up! Moves: Up, Down, Left, Right.",
                 route: [[0,0], [0,1], [0,2], [0,3], [1,3], [1,2], [1,1], [1,0], [2,0], [2,1], [2,2], [2,3], [3,3], [3,2], [3,1], [3,0]],
                 start: [0,0],
-                end: [3,0]
+                end: [3,0],
+                allowDiagonal: false,
+                allowNonAdjacent: false
             },
             2: {
                 title: "The Winding Perimeter",
-                description: "The path ahead winds along the edges! Strategize your moves to reach the star (2,1) without getting trapped. Every step counts!",
+                description: "The path winds along the edges! Reach the star (2,1) without getting trapped. Every step counts! Moves: Up, Down, Left, Right.",
                 route: [[0,0], [0,1], [0,2], [0,3], [1,3], [2,3], [3,3], [3,2], [3,1], [3,0], [2,0], [1,0], [1,1], [1,2], [2,2], [2,1]],
                 start: [0,0],
-                end: [2,1]
+                end: [2,1],
+                allowDiagonal: false,
+                allowNonAdjacent: false
             },
             3: {
                 title: "The Snaking Diagonal",
-                description: "This level demands a keen eye for diagonals! Guide Z through a serpentine route to the star (0,3) while covering all cells. Don't get tangled!",
+                description: "Guide Z through a serpentine route to the star (0,3) while covering all cells. Moves: Up, Down, Left, Right.",
                 route: [[0,0], [1,0], [2,0], [3,0], [3,1], [2,1], [1,1], [0,1], [0,2], [1,2], [2,2], [3,2], [3,3], [2,3], [1,3], [0,3]],
                 start: [0,0],
-                end: [0,3]
+                end: [0,3],
+                allowDiagonal: false,
+                allowNonAdjacent: false
             },
             4: {
                 title: "The Zigzag Traverse",
-                description: "Guide Z through a zigzag pattern across the grid, starting from the bottom-right corner (3,3) and reaching the star at the top-right corner (0,3). Cover all cells in a single, continuous path!",
+                description: "Guide Z through a zigzag pattern from the bottom-right corner (3,3) to the star at the top-right corner (0,3). Cover all cells! Moves: Up, Down, Left, Right.",
                 route: [[3,3], [3,2], [2,2], [2,3], [1,3], [1,2], [1,1], [2,1], [3,1], [3,0], [2,0], [1,0], [0,0], [0,1], [0,2], [0,3]],
                 start: [3,3],
-                end: [0,3]
+                end: [0,3],
+                allowDiagonal: false,
+                allowNonAdjacent: false
             },
             5: {
                 title: "The Corner Dance",
-                description: "Begin at the bottom-left corner (3,0) and dance through the grid to the top-left corner (0,0). Plan carefully to cover every square!",
+                description: "Begin at the bottom-left corner (3,0) and dance to the top-left corner (0,0). Plan carefully! Moves: Up, Down, Left, Right, Diagonals, Non-adjacent.",
                 route: [[3,0], [2,0], [2,1], [3,1], [3,2], [2,2], [1,2], [1,1], [1,0], [0,1], [0,2], [0,3], [1,3], [2,3], [3,3], [0,0]],
                 start: [3,0],
-                end: [0,0]
+                end: [0,0],
+                allowDiagonal: true,
+                allowNonAdjacent: true
             },
             6: {
                 title: "The Magic Spiral",
-                description: "Begin from within! Z starts at (1,1) and must spiral outwards, then return to the star (3,0). A truly strategic challenge!",
+                description: "Start at (1,1) and spiral outwards to the star (3,0). A strategic challenge! Moves: Up, Down, Left, Right.",
                 route: [[1,1], [1,2], [2,2], [2,1], [2,0], [1,0], [0,0], [0,1], [0,2], [0,3], [1,3], [2,3], [3,3], [3,2], [3,1], [3,0]],
                 start: [1,1],
-                end: [3,0]
+                end: [3,0],
+                allowDiagonal: false,
+                allowNonAdjacent: false
             },
             7: {
                 title: "The Crisscross Climb",
-                description: "Start at the top-center (0,2) and weave a crisscross path to reach the star at the bottom-center (3,2). Test your ability to navigate tight turns!",
+                description: "Start at the top-center (0,2) and weave to the star at the bottom-center (3,2). Non-adjacent moves permitted! Moves: Up, Down, Left, Right, Non-adjacent.",
                 route: [[0,2], [0,1], [1,1], [1,2], [2,2], [2,1], [2,0], [1,0], [0,0], [0,3], [1,3], [2,3], [3,3], [3,1], [3,0], [3,2]],
                 start: [0,2],
-                end: [3,2]
+                end: [3,2],
+                allowDiagonal: false,
+                allowNonAdjacent: true
             },
             8: {
                 title: "The Inner Loop",
-                description: "Start at the inner cell (1,2) and loop through the grid to reach the star at (2,0). Master this intricate path to claim victory!",
+                description: "Start at (1,2) and loop to the star at (2,0). Master this intricate path! Moves: Up, Down, Left, Right, Diagonals, Non-adjacent.",
                 route: [[1,2], [1,1], [0,1], [0,2], [0,3], [1,3], [2,3], [2,2], [3,2], [3,1], [3,0], [2,1], [1,0], [0,0], [3,3], [2,0]],
                 start: [1,2],
-                end: [2,0]
+                end: [2,0],
+                allowDiagonal: true,
+                allowNonAdjacent: true
             }
         };
         const totalLevels = Object.keys(levelPaths).length;
@@ -533,7 +552,7 @@
             const voices = window.speechSynthesis.getVoices();
             selectedVoice = voices.find(v => v.name.toLowerCase().includes('female') || v.name === 'Google US English') || voices[0];
             if (currentLevelData && !isAudioMuted) {
-                speakRobotically(currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start"));
+                speakRobotically(`Level ${currentLevel}: ${currentLevelData.title}. ${currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start")}`);
             }
         }
 
@@ -550,8 +569,8 @@
                 playerVars: { 
                     autoplay: 0, 
                     controls: 0, 
-                    loop: 1, 
-                    playlist: youtubeVideoId,
+                    loop: isAudioLooping ? 1 : 0,
+                    playlist: isAudioLooping ? youtubeVideoId : undefined,
                     start: 0,
                     mute: 0,
                     playsinline: 1
@@ -567,10 +586,13 @@
         function onYoutubePlayerReady(event) {
             console.log("YouTube player is ready");
             youtubePlayer.setVolume(isAudioMuted ? 0 : 30);
+            if (isAudioPlaying) {
+                youtubePlayer.playVideo();
+            }
         }
 
         function onYoutubePlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
+            if (event.data === YT.PlayerState.ENDED && isAudioLooping) {
                 youtubePlayer.playVideo();
             }
             isAudioPlaying = event.data === YT.PlayerState.PLAYING;
@@ -585,7 +607,10 @@
         function updateAudioButtons() {
             startStopAudioBtn.textContent = isAudioPlaying ? "Stop Audio" : "Start Audio";
             muteUnmuteAudioBtn.textContent = isAudioMuted ? "Unmute Audio" : "Mute Audio";
-            showMessage(isAudioMuted ? "Audio Muted" : (isAudioPlaying ? "Background Audio: Playing" : "Background Audio: Stopped"));
+            toggleLoopBtn.textContent = isAudioLooping ? "Disable Audio Loop" : "Enable Audio Loop";
+            let audioStatus = isAudioMuted ? "Audio Muted" : (isAudioPlaying ? "Background Audio: Playing" : "Background Audio: Stopped");
+            audioStatus += `, Loop: ${isAudioLooping ? "On" : "Off"}`;
+            showMessage(audioStatus);
         }
 
         function handleStartAudio() {
@@ -595,7 +620,7 @@
                 if (!isAudioMuted) youtubePlayer.setVolume(30);
                 updateAudioButtons();
                 if (currentLevelData && selectedVoice && !isAudioMuted) {
-                    speakRobotically(currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start"));
+                    speakRobotically(`Level ${currentLevel}: ${currentLevelData.title}. ${currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start")}`);
                 }
             }
         }
@@ -624,9 +649,41 @@
             if (isAudioMuted) {
                 window.speechSynthesis.cancel();
             } else if (isAudioPlaying && currentLevelData && selectedVoice) {
-                speakRobotically(currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start"));
+                speakRobotically(`Level ${currentLevel}: ${currentLevelData.title}. ${currentLevelData.description.replace("⭐", "star").replace("cyan start", "cyan color start")}`);
             }
             updateAudioButtons();
+        }
+
+        function toggleAudioLoop() {
+            isAudioLooping = !isAudioLooping;
+            if (youtubePlayer) {
+                youtubePlayer.destroy();
+                youtubePlayer = new YT.Player('player', {
+                    height: '1',
+                    width: '1',
+                    videoId: youtubeVideoId,
+                    playerVars: { 
+                        autoplay: isAudioPlaying ? 1 : 0,
+                        controls: 0,
+                        loop: isAudioLooping ? 1 : 0,
+                        playlist: isAudioLooping ? youtubeVideoId : undefined,
+                        start: 0,
+                        mute: isAudioMuted ? 1 : 0,
+                        playsinline: 1
+                    },
+                    events: { 
+                        'onReady': onYoutubePlayerReady, 
+                        'onStateChange': onYoutubePlayerStateChange,
+                        'onError': onYoutubePlayerError
+                    }
+                });
+            }
+            showMessage(`Audio Loop ${isAudioLooping ? "Enabled" : "Disabled"}`, true, 2000);
+            if (selectedVoice && !isAudioMuted) {
+                speakRobotically(`Audio loop ${isAudioLooping ? "enabled" : "disabled"}`);
+            }
+            updateAudioButtons();
+            saveGameState();
         }
 
         function updateStats() {
@@ -704,6 +761,13 @@
             gameActive = true;
             adjacentAlertPlayed = false;
             if (starCellElement) starCellElement.style.transform = 'scale(1)';
+
+            // Show level start notification
+            let moveNotification = `Level ${currentLevel}: ${currentLevelData.title}. ${currentLevelData.description.replace("⭐", "star")}`;
+            showMessage(moveNotification, true, 4000);
+            if (selectedVoice && !isAudioMuted) {
+                speakRobotically(moveNotification.replace("cyan start", "cyan color start"));
+            }
         }
 
         function onCellClick(e) {
@@ -721,11 +785,11 @@
                 return;
             }
 
-            const isAdjacent = isAdjacentMove(currentPos.row, currentPos.col, row, col);
-            if (!isAdjacent) {
+            const isValidMove = isAdjacentMove(currentPos.row, currentPos.col, row, col);
+            if (!isValidMove) {
                 if (!adjacentAlertPlayed) {
-                    if (selectedVoice && !isAudioMuted) speakRobotically("Move must be adjacent to current cell! Restarting game.");
-                    showMessage("Invalid move! You must click an adjacent square. Resetting...", true, 2000);
+                    if (selectedVoice && !isAudioMuted) speakRobotically("Invalid move! You must click a valid square. Resetting...");
+                    showMessage("Invalid move! You must click a valid square. Resetting...", true, 2000);
                     adjacentAlertPlayed = true;
                     setTimeout(() => { adjacentAlertPlayed = false; resetGame(); }, 2000);
                 }
@@ -771,19 +835,41 @@
         }
 
         function isAdjacentMove(fromRow, fromCol, toRow, toCol) {
+            if (currentLevelData.allowNonAdjacent) {
+                return true; // Allow any move for levels with non-adjacent moves permitted
+            }
             const rowDiff = Math.abs(fromRow - toRow);
             const colDiff = Math.abs(fromCol - toCol);
-            return (rowDiff + colDiff === 1);
+            if (currentLevelData.allowDiagonal) {
+                return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1) || (rowDiff === 1 && colDiff === 1);
+            }
+            return rowDiff + colDiff === 1;
         }
 
         function hasAvailableMoves() {
             if (!currentPos) return true;
+            if (currentLevelData.allowNonAdjacent) {
+                for (let row = 0; row < GRID_ROWS; row++) {
+                    for (let col = 0; col < GRID_COLS; col++) {
+                        if (!visited[row][col]) return true;
+                    }
+                }
+                return false;
+            }
             const directions = [
                 { row: currentPos.row - 1, col: currentPos.col },
                 { row: currentPos.row + 1, col: currentPos.col },
                 { row: currentPos.row, col: currentPos.col - 1 },
                 { row: currentPos.row, col: currentPos.col + 1 }
             ];
+            if (currentLevelData.allowDiagonal) {
+                directions.push(
+                    { row: currentPos.row - 1, col: currentPos.col - 1 },
+                    { row: currentPos.row - 1, col: currentPos.col + 1 },
+                    { row: currentPos.row + 1, col: currentPos.col - 1 },
+                    { row: currentPos.row + 1, col: currentPos.col + 1 }
+                );
+            }
             for (let dir of directions) {
                 if (dir.row >= 0 && dir.row < GRID_ROWS && dir.col >= 0 && dir.col < GRID_COLS && !visited[dir.row][dir.col]) return true;
             }
@@ -805,6 +891,21 @@
         function resetGame() {
             victory.classList.remove('flash');
             initGrid();
+        }
+
+        function resetProgress() {
+            localStorage.removeItem('icosianZ_autosave');
+            currentLevel = 1;
+            isAudioMuted = false;
+            isAudioPlaying = false;
+            isAudioLooping = true;
+            if (youtubePlayer && youtubePlayer.pauseVideo) {
+                youtubePlayer.pauseVideo();
+            }
+            initGrid();
+            updateAudioButtons();
+            showMessage("Game progress reset.", true, 2000);
+            if (selectedVoice && !isAudioMuted) speakRobotically("Game progress reset.");
         }
 
         function showSolution() {
@@ -849,7 +950,8 @@
                 visited,
                 movesCount,
                 isAudioMuted,
-                isAudioPlaying
+                isAudioPlaying,
+                isAudioLooping
             };
             localStorage.setItem('icosianZ_autosave', JSON.stringify(gameState));
         }
@@ -868,6 +970,7 @@
             movesCount = gameState.movesCount;
             isAudioMuted = gameState.isAudioMuted;
             isAudioPlaying = gameState.isAudioPlaying;
+            isAudioLooping = gameState.isAudioLooping !== undefined ? gameState.isAudioLooping : true;
             if (youtubePlayer) {
                 if (isAudioPlaying) {
                     youtubePlayer.playVideo();
@@ -913,13 +1016,13 @@
             victory.style.display = 'none';
             gameActive = true;
             adjacentAlertPlayed = false;
-        }
 
-        function resetProgress() {
-            localStorage.removeItem('icosianZ_autosave');
-            showMessage("All progress reset.", true, 2000);
-            if (selectedVoice && !isAudioMuted) speakRobotically("All progress reset.");
-            resetGame();
+            // Show level start notification on load
+            let moveNotification = `Level ${currentLevel}: ${currentLevelData.title}. ${currentLevelData.description.replace("⭐", "star")}`;
+            showMessage(moveNotification, true, 4000);
+            if (selectedVoice && !isAudioMuted) {
+                speakRobotically(moveNotification.replace("cyan start", "cyan color start"));
+            }
         }
 
         // Event Listeners
@@ -928,6 +1031,7 @@
         solutionBtn.addEventListener('click', showSolution);
         startStopAudioBtn.addEventListener('click', startStopAudio);
         muteUnmuteAudioBtn.addEventListener('click', muteUnmuteAudio);
+        toggleLoopBtn.addEventListener('click', toggleAudioLoop);
         resetProgressBtn.addEventListener('click', resetProgress);
         playAgainBtn.addEventListener('click', () => {
             victory.style.display = 'none';
