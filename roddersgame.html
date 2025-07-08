@@ -165,24 +165,6 @@
             animation: flash 0.5s ease-out;
         }
 
-        #z {
-            position: absolute;
-            width: 72.6px;
-            height: 72.6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30.8px;
-            color: #0ff;
-            text-shadow: 0 0 12px cyan;
-            pointer-events: none;
-            transition: all 0.2s ease;
-            opacity: 1;
-            border: 2px solid #0ff;
-            border-radius: 50%;
-            background-color: rgba(0, 255, 255, 0.1);
-        }
-
         #message {
             font-size: 16px;
             color: #fff;
@@ -342,12 +324,6 @@
                 font-size: 24px;
             }
             
-            #z {
-                width: 56px;
-                height: 56px;
-                font-size: 24px;
-            }
-            
             h1 {
                 font-size: 1.5rem;
             }
@@ -395,7 +371,6 @@
         
         <div id="game-area">
             <div class="grid" id="grid"></div>
-            <div id="z">Z</div>
             <div id="message">
                 <button id="startButton">Start Audio</button>
             </div>
@@ -435,7 +410,6 @@
         const victory = document.getElementById('victory');
         const victoryMessage = document.getElementById('victory-message');
         const playAgainBtn = document.getElementById('play-again');
-        const zEl = document.getElementById('z');
         const levelDescriptionText = document.getElementById('level-description-text');
         const levelTitleText = document.getElementById('level-title-text');
         const currentLevelStat = document.getElementById('current-level');
@@ -749,9 +723,6 @@
             path = [[startPos[0], startPos[1]]];
             movesCount = 0;
             visited[startPos[0]][startPos[1]] = true;
-            zEl.style.top = (startPos[0] * (CELL_SIZE + GRID_GAP) + CELL_BORDER + GRID_PADDING) + 'px';
-            zEl.style.left = (startPos[1] * (CELL_SIZE + GRID_GAP) + CELL_BORDER + GRID_PADDING) + 'px';
-            zEl.style.opacity = '1';
             document.querySelector(`.cell[data-row="${startPos[0]}"][data-col="${startPos[1]}"]`).classList.add('visited');
 
             updateStats();
@@ -761,13 +732,6 @@
             gameActive = true;
             adjacentAlertPlayed = false;
             if (starCellElement) starCellElement.style.transform = 'scale(1)';
-
-            // Show level start notification
-            let moveNotification = `Level ${currentLevel}: ${currentLevelData.title}. ${currentLevelData.description.replace("⭐", "star")}`;
-            showMessage(moveNotification, true, 4000);
-            if (selectedVoice && !isAudioMuted) {
-                speakRobotically(moveNotification.replace("cyan start", "cyan color start"));
-            }
         }
 
         function onCellClick(e) {
@@ -801,8 +765,6 @@
             cell.classList.add('visited');
             path.push([row, col]);
             movesCount++;
-            zEl.style.top = (row * (CELL_SIZE + GRID_GAP) + CELL_BORDER + GRID_PADDING) + 'px';
-            zEl.style.left = (col * (CELL_SIZE + GRID_GAP) + CELL_BORDER + GRID_PADDING) + 'px';
             currentPos = { row, col };
             updateStats();
 
@@ -928,8 +890,6 @@
                     visited[row][col] = true;
                     const cell = gridElement.children[row * GRID_COLS + col];
                     cell.classList.add('visited');
-                    zEl.style.top = (row * (CELL_SIZE + GRID_GAP) + CELL_BORDER + GRID_PADDING) + 'px';
-                    zEl.style.left = (col * (CELL_SIZE + GRID_GAP) + CELL_BORDER + GRID_PADDING) + 'px';
                     index++;
                     if (index === currentSolution.length) {
                         if (selectedVoice && !isAudioMuted) speakRobotically("Solution shown! Starting the level again.");
@@ -1006,23 +966,12 @@
                 }
             }
 
-            zEl.style.top = (currentPos.row * (CELL_SIZE + GRID_GAP) + CELL_BORDER + GRID_PADDING) + 'px';
-            zEl.style.left = (currentPos.col * (CELL_SIZE + GRID_GAP) + CELL_BORDER + GRID_PADDING) + 'px';
-            zEl.style.opacity = '1';
-
             levelTitleText.textContent = `Level ${currentLevel}: ${currentLevelData.title}`;
             levelDescriptionText.textContent = currentLevelData.description;
             updateStats();
             victory.style.display = 'none';
             gameActive = true;
             adjacentAlertPlayed = false;
-
-            // Show level start notification on load
-            let moveNotification = `Level ${currentLevel}: ${currentLevelData.title}. ${currentLevelData.description.replace("⭐", "star")}`;
-            showMessage(moveNotification, true, 4000);
-            if (selectedVoice && !isAudioMuted) {
-                speakRobotically(moveNotification.replace("cyan start", "cyan color start"));
-            }
         }
 
         // Event Listeners
