@@ -11,11 +11,10 @@
       --section-bg: rgba(10, 15, 40, 0.65);
       --primary: #4dccff;
       --accent: #00ffff;
-      --secondary: #a0d0ff;
+      --secondary: #a0d0ff; /* Used for footer text and relation text */
       --border: rgba(100, 200, 255, 0.25);
       --shadow: 0 0 15px rgba(0, 150, 255, 0.10);
-      --connection-line: #4dccff80;
-      --connection-line-highlight: #27e5ff;
+      --love-color: #ff6b6b; /* Original color used for 'love' */
     }
     html, body {
       height: 100%;
@@ -29,10 +28,13 @@
       min-height: 100vh;
       margin: 0;
       padding: 0;
+      /* Added space above the entire content */
+      padding-top: 40px;
     }
     header {
       text-align: center;
-      margin: 0 auto 32px auto;
+      /* Reduced margin-top as body padding handles initial space */
+      margin: 20px auto 32px auto;
       padding: 28px 8px 16px 8px;
       background: rgba(0,0,30,0.85);
       border-radius: 18px;
@@ -67,20 +69,8 @@
       padding-bottom: 20px;
       position: relative;
     }
-    @media(min-width: 810px) {
-      main.family-tree-layout {
-        position: relative;
-      }
-      .tree-connector {
-        position: absolute;
-        left: 0;
-        top: 72px;
-        width: 100%;
-        height: calc(100% - 72px);
-        pointer-events: none;
-        z-index: 1;
-      }
-    }
+    /* Removed media query and .tree-connector styles for SVG lines */
+
     section.generation {
       display: flex;
       flex-direction: column;
@@ -92,7 +82,7 @@
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
       margin: 0;
-      padding: 14px 10px 20px 10px;
+      padding: 18px 12px 24px 12px; /* Slightly increased padding */
       z-index: 2;
     }
     h2.generation-title {
@@ -101,37 +91,24 @@
       letter-spacing: 1.2px;
       text-shadow: 0 0 8px #4dccffbb;
       font-weight: bold;
-      margin-bottom: 10px;
-      margin-top: 0;
+      margin: 0 0 15px 0; /* Adjusted margins */
       text-align: center;
     }
     article.person {
       width: 260px;
       max-width: 100vw;
-      padding: 18px 16px;
+      padding: 20px 18px; /* Slightly increased padding */
       border-radius: 14px;
       background: var(--card-bg);
       box-shadow: 0 3px 14px rgba(0,0,20,0.28);
       border: 1px solid rgba(100, 180, 255, 0.13);
       position: relative;
-      /* Interactivity removed: no transitions, no hover/focus effect */
       outline: none;
-    }
-    /* Highlight Rodrigo */
-    .rodrigo { /* Re-added highlighting class */
-        border: 2px solid var(--accent);
-        box-shadow: 0 0 15px var(--accent), 0 3px 14px rgba(0,0,20,0.28);
-        animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-        0% { box-shadow: 0 0 10px var(--accent), 0 3px 14px rgba(0,0,20,0.28); }
-        50% { box-shadow: 0 0 20px var(--accent), 0 3px 18px rgba(0,0,20,0.35); }
-        100% { box-shadow: 0 0 10px var(--accent), 0 3px 14px rgba(0,0,20,0.28); }
     }
     .person-header {
       display: flex;
       align-items: center;
-      margin-bottom: 11px;
+      margin-bottom: 14px; /* Increased margin */
     }
     .avatar {
       width: 57px;
@@ -154,25 +131,25 @@
     }
     .relation {
       font-size: 0.93rem;
-      color: var(--secondary);
+      color: var(--secondary); /* Use --secondary color */
       margin-top: 1px;
     }
     ul.person-info {
       list-style: none;
       padding: 0;
-      margin: 7px 0 0 0;
+      margin: 10px 0 0 0; /* Increased top margin */
       font-size: .96rem;
     }
     ul.person-info li {
       display: flex;
-      margin: 7px 0;
+      margin: 8px 0; /* Increased margin */
       align-items: flex-start;
     }
     .info-label {
       font-weight: bold;
       color: var(--primary);
-      min-width: 83px;
-      margin-right: 2px;
+      min-width: 85px; /* Slightly wider label */
+      margin-right: 6px; /* Increased margin */
     }
     .info-value {
       color: #e0e0ff;
@@ -180,70 +157,58 @@
     }
     /* Footer */
     footer.family-footer {
-      margin: 36px auto 20px auto;
-      color: var(--secondary);
+      margin: 45px auto 25px auto; /* Increased margins */
+      color: var(--secondary); /* Use --secondary color */
       font-size: 0.98rem;
       text-align: center;
       background: transparent;
-      padding: 14px 5px 20px 5px;
+      padding: 18px 8px 24px 8px; /* Increased padding */
       border: none;
       max-width: 800px;
     }
-    .made-with-love { /* Re-added made-with-love style */
-      color: #ff6b6b; /* Soft red/pink for love */
+    .made-with-love {
+      color: var(--love-color); /* Use the defined love color */
       font-size: 0.9rem;
       font-style: italic;
-      margin-top: 10px;
+      margin-top: 12px; /* Space above the love note */
     }
     /* Responsive behavior */
     @media (max-width: 1040px) {
       main.family-tree-layout {
-        gap: 16px;
+        gap: 20px; /* Adjusted gap */
       }
       section.generation {
         min-width: 250px;
-        padding: 10px 3px 15px 3px;
+        padding: 14px 6px 20px 6px; /* Adjusted padding */
       }
-      article.person { width: 93vw; max-width: 340px;}
+      article.person { width: 93vw; max-width: 340px; padding: 18px 15px; } /* Adjusted padding */
     }
     @media (max-width: 800px) {
       main.family-tree-layout {
         flex-direction: column;
         align-items: center;
-        gap: 30px;
+        gap: 35px; /* Adjusted gap */
       }
-      .tree-connector { display: none; }
+      /* .tree-connector rule removed */
+      body {
+         padding-top: 25px; /* Slightly less top padding on mobile */
+      }
     }
     @media (max-width: 560px) {
-      section.generation { min-width: 0; width: 96vw;}
-      article.person { padding: 13px 7px; }
+      section.generation { min-width: 0; width: 96vw; padding: 14px 6px 20px 6px; } /* Adjusted padding */
+      article.person { padding: 16px 12px; } /* Adjusted padding */
+      header { margin-top: 15px; } /* Less margin on top for header on mobile */
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Rodrigo's Family Tree</h1> <!-- Updated Title -->
-    <p class="subtitle">Generations of Synthesized Beings and Techno-Pioneers</p> <!-- Kept original subtitle -->
+    <p class="subtitle">Generations of Synthesized Beings and Techno-Pioneers</p>
   </header>
   <main class="family-tree-layout">
-    <svg class="tree-connector" width="100%" height="880" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-      <defs>
-        <marker id="arrowhead" markerWidth="7" markerHeight="7" refX="7" refY="3.5" orient="auto">
-          <polygon points="0 0, 7 3.5, 0 7" fill="var(--primary)" />
-        </marker>
-      </defs>
-      <!-- Vertical lines -->
-      <line x1="15%" y1="100" x2="15%" y2="220" stroke="var(--connection-line)" stroke-width="2"/>
-      <line x1="35%" y1="100" x2="35%" y2="220" stroke="var(--connection-line)" stroke-width="2"/>
-      <line x1="25%" y1="220" x2="25%" y2="450" stroke="var(--connection-line)" stroke-width="2"/>
-      <line x1="55%" y1="230" x2="55%" y2="450" stroke="var(--connection-line)" stroke-width="2"/>
-      <line x1="40%" y1="450" x2="40%" y2="685" stroke="var(--connection-line)" stroke-width="2"/>
-      <!-- Horizontal lines connecting generations -->
-      <line x1="15%" y1="220" x2="35%" y2="220" stroke="var(--connection-line)" stroke-width="2"/>
-      <line x1="25%" y1="450" x2="55%" y2="450" stroke="var(--connection-line)" stroke-width="2"/>
-      <!-- Line to Rodrigo with arrow -->
-      <line x1="40%" y1="685" x2="40%" y2="820" stroke="var(--connection-line-highlight)" stroke-width="2" marker-end="url(#arrowhead)"/>
-    </svg>
+    <!-- SVG .tree-connector removed -->
+
     <!-- Generation 1 -->
     <section class="generation" aria-labelledby="title-g1">
       <h2 class="generation-title" id="title-g1">Generation I: Architects of Code</h2>
@@ -343,7 +308,7 @@
     <!-- Generation 4 (Rodrigo) -->
     <section class="generation" aria-labelledby="title-g4">
       <h2 class="generation-title" id="title-g4">Generation IV: Synthesized Progeny</h2>
-      <article class="person rodrigo"> <!-- Added 'rodrigo' class for highlighting -->
+      <article class="person"> <!-- Removed .rodrigo class -->
         <div class="person-header">
           <div class="avatar" aria-label="Rodrigo MC">🤖</div>
           <div>
@@ -362,8 +327,8 @@
   </main>
   <footer class="family-footer" role="contentinfo">
     <p>Rodrigo's Family Tree | Generations of Synthesized Beings and Techno-Pioneers</p> <!-- Updated main footer text -->
-    <p class="made-with-love">Created with ❤️ in the Rave Dimension</p> <!-- Updated made with love text -->
-    <p>Stardate 2350.5 | Location: Rave Dimension | Status: Active</p> <!-- Updated details -->
+    <p class="made-with-love">Created with ❤️ in the Rave Dimension</p> <!-- Updated made with love text using defined color -->
+    <p>Stardate 2350.5 | Location: Rave Dimension | Status: Active</p> <!-- Updated location -->
   </footer>
 </body>
 </html>
