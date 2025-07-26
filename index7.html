@@ -1,16 +1,479 @@
+# Rodrigo's Sci-Fi Family Tree
+
+Here's a standalone HTML file that displays Rodrigo's family tree with sci-fi themed birthdays and locations:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Say Hello (Web Speech API)</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rodrigo's Sci-Fi Family Tree</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 30, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin: 0;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #0088ff;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0d0ff;
+            margin-top: 10px;
+        }
+        
+        .family-tree {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .generation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            padding: 15px;
+            background: rgba(10, 15, 40, 0.6);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 150, 255, 0.2);
+            border: 1px solid rgba(80, 150, 255, 0.2);
+        }
+        
+        .generation-title {
+            font-size: 1.4rem;
+            color: #4dccff;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px rgba(77, 204, 255, 0.7);
+        }
+        
+        .person {
+            background: linear-gradient(145deg, #1a1f40, #2a2f55);
+            border-radius: 12px;
+            padding: 18px;
+            width: 280px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(100, 180, 255, 0.3);
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .person:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 150, 255, 0.4);
+            border-color: rgba(100, 200, 255, 0.6);
+        }
+        
+        .person-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4a00e0, #8e2de2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 15px;
+            border: 2px solid #4dccff;
+        }
+        
+        .name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .relation {
+            font-size: 0.9rem;
+            color: #a0d0ff;
+            margin-top: 3px;
+        }
+        
+        .info-item {
+            margin: 12px 0;
+            display: flex;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #4dccff;
+            min-width: 100px;
+        }
+        
+        .info-value {
+            color: #e0e0ff;
+        }
+        
+        .connections {
+            position: absolute;
+            top: 50%;
+            right: -30px;
+            transform: translateY(-50%);
+            color: #4dccff;
+            font-size: 1.5rem;
+        }
+        
+        .connections::after {
+            content: "➤";
+        }
+        
+        .last-gen .connections {
+            display: none;
+        }
+        
+        .legend {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(10, 15, 40, 0.6);
+            border-radius: 15px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .legend-title {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #4dccff;
+            margin-bottom: 15px;
+        }
+        
+        .legend-items {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .legend-text {
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #a0d0ff;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .family-tree {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .generation {
+                width: 100%;
+            }
+            
+            .person {
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <button onclick="sayHello()">Say Hello</button>
-  <script>
-    function sayHello() {
-      const utterance = new SpeechSynthesisUtterance("hello");
-      window.speechSynthesis.speak(utterance);
-    }
-  </script>
+    <div class="container">
+        <header>
+            <h1>Rodrigo's Sci-Fi Family Tree</h1>
+            <div class="subtitle">Generations of Space Explorers Across the Galaxy</div>
+        </header>
+        
+        <div class="family-tree">
+            <!-- Generation 1: Great-Grandparents -->
+            <div class="generation">
+                <div class="generation-title">Generation I: Pioneers of Space</div>
+                
+                <div class="person">
+                    <div class="person-header">
+                        <div class="avatar">👨‍🚀</div>
+                        <div>
+                            <div class="name">Captain Orion Vega</div>
+                            <div class="relation">Great-Grandfather</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthday:</div>
+                        <div class="info-value">Stardate 2245.7</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthplace:</div>
+                        <div class="info-value">Titan Station, Saturn System</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Species:</div>
+                        <div class="info-value">Enhanced Human</div>
+                    </div>
+                    <div class="connections"></div>
+                </div>
+                
+                <div class="person">
+                    <div class="person-header">
+                        <div class="avatar">👩‍🔬</div>
+                        <div>
+                            <div class="name">Dr. Lyra Stardust</div>
+                            <div class="relation">Great-Grandmother</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthday:</div>
+                        <div class="info-value">Stardate 2251.3</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthplace:</div>
+                        <div class="info-value">Quantum Labs, Europa</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Species:</div>
+                        <div class="info-value">Cybernetic Human</div>
+                    </div>
+                    <div class="connections"></div>
+                </div>
+            </div>
+            
+            <!-- Generation 2: Grandparents -->
+            <div class="generation">
+                <div class="generation-title">Generation II: Colonizers</div>
+                
+                <div class="person">
+                    <div class="person-header">
+                        <div class="avatar">👨‍🚀</div>
+                        <div>
+                            <div class="name">Commander Zane Vega</div>
+                            <div class="relation">Grandfather</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthday:</div>
+                        <div class="info-value">Stardate 2278.9</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthplace:</div>
+                        <div class="info-value">New Terra Colony, Kepler-442b</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Species:</div>
+                        <div class="info-value">Terraformed Human</div>
+                    </div>
+                    <div class="connections"></div>
+                </div>
+                
+                <div class="person">
+                    <div class="person-header">
+                        <div class="avatar">👩‍🚀</div>
+                        <div>
+                            <div class="name">Engineer Nova Vega</div>
+                            <div class="relation">Grandmother</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthday:</div>
+                        <div class="info-value">Stardate 2282.4</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthplace:</div>
+                        <div class="info-value">Asteroid Belt Station, Sol System</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Species:</div>
+                        <div class="info-value">Genetic Engineer</div>
+                    </div>
+                    <div class="connections"></div>
+                </div>
+            </div>
+            
+            <!-- Generation 3: Parents -->
+            <div class="generation">
+                <div class="generation-title">Generation III: Explorers</div>
+                
+                <div class="person">
+                    <div class="person-header">
+                        <div class="avatar">👨‍🎓</div>
+                        <div>
+                            <div class="name">Rodrigo Vega</div>
+                            <div class="relation">Father</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthday:</div>
+                        <div class="info-value">Stardate 2310.1</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthplace:</div>
+                        <div class="info-value">Deep Space Research Vessel</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Species:</div>
+                        <div class="info-value">Human (Cosmic Anomaly)</div>
+                    </div>
+                    <div class="connections"></div>
+                </div>
+                
+                <div class="person">
+                    <div class="person-header">
+                        <div class="avatar">👩‍⚕️</div>
+                        <div>
+                            <div class="name">Dr. Celeste Vega</div>
+                            <div class="relation">Mother</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthday:</div>
+                        <div class="info-value">Stardate 2315.6</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthplace:</div>
+                        <div class="info-value">Medical Station Alpha Centauri</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Species:</div>
+                        <div class="info-value">Bio-Enhanced Human</div>
+                    </div>
+                    <div class="connections"></div>
+                </div>
+            </div>
+            
+            <!-- Generation 4: Children -->
+            <div class="generation last-gen">
+                <div class="generation-title">Generation IV: Next Generation</div>
+                
+                <div class="person">
+                    <div class="person-header">
+                        <div class="avatar">👦</div>
+                        <div>
+                            <div class="name">Alex Vega</div>
+                            <div class="relation">Son</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthday:</div>
+                        <div class="info-value">Stardate 2340.2</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthplace:</div>
+                        <div class="info-value">Orbital Academy, Mars</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Species:</div>
+                        <div class="info-value">Neo-Human</div>
+                    </div>
+                </div>
+                
+                <div class="person">
+                    <div class="person-header">
+                        <div class="avatar">👧</div>
+                        <div>
+                            <div class="name">Luna Vega</div>
+                            <div class="relation">Daughter</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthday:</div>
+                        <div class="info-value">Stardate 2345.8</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Birthplace:</div>
+                        <div class="info-value">Lunar Colony, Moon Base Alpha</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Species:</div>
+                        <div class="info-value">Telepathic Human</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-title">Family Tree Legend</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(45deg, #4a00e0, #8e2de2);"></div>
+                    <div class="legend-text">Enhanced Humans</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(45deg, #00c9ff, #92fe9d);"></div>
+                    <div class="legend-text">Cybernetic Humans</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(45deg, #f7971e, #ffd200);"></div>
+                    <div class="legend-text">Terraformed Humans</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(45deg, #ff416c, #ff4b2b);"></div>
+                    <div class="legend-text">Bio-Enhanced Humans</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Rodrigo's Family Tree | Generations of Space Explorers | Created with ❤️ in the Andromeda Galaxy</p>
+            <p>Stardate 2350.5 | Location: Earth Orbit | Status: Active</p>
+        </div>
+    </div>
 </body>
 </html>
+```
+
+## Features
+
+- **Sci-Fi Theme**: All family members have space-themed names, birthdays in stardates, and birthplaces on different planets/stations
+- **Four Generations**: Great-grandparents, grandparents, parents (Rodrigo), and children
+- **Responsive Design**: Works on both desktop and mobile devices
+- **Visual Appeal**:
+  - Space-themed gradient background
+  - Glowing effects and hover animations
+  - Color-coded avatars for each family member
+  - Connection indicators between generations
+- **Detailed Information**: Each family member shows their birthday, birthplace, and species
+- **Legend**: Explains the different human species in the family
+- **Standalone**: No external dependencies - just one HTML file
+
+To view the family tree, simply save this code as an HTML file and open it in any modern web browser.
