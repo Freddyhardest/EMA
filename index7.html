@@ -1,20 +1,22 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rodrigo's Family Tree</title> <!-- Updated Title -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="Aspose.Words for .NET 25.7.0" />
+  <title>RODRIGO MC FAMILY TREE</title>
   <style>
     :root {
-      --main-bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      --main-bg: linear-gradient(to bottom, #0f0c29 100%, #0f0c29);
       --card-bg: linear-gradient(145deg, #1a1f40, #2a2f55);
       --section-bg: rgba(10, 15, 40, 0.65);
       --primary: #4dccff;
       --accent: #00ffff;
-      --secondary: #a0d0ff; /* Used for footer text and relation text */
+      --secondary: #a0d0ff;
       --border: rgba(100, 200, 255, 0.25);
       --shadow: 0 0 15px rgba(0, 150, 255, 0.10);
-      --love-color: #ff6b6b; /* Original color used for 'love' */
+      --love-color: #ff6b6b;
     }
     html, body {
       height: 100%;
@@ -22,18 +24,16 @@
       box-sizing: border-box;
     }
     body {
-      background: var(--main-bg);
+      background: linear-gradient(to bottom, #0f0c29 100%, #0f0c29);
       color: #e0e0ff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       margin: 0;
       padding: 0;
-      /* Added space above the entire content */
       padding-top: 40px;
     }
     header {
       text-align: center;
-      /* Reduced margin-top as body padding handles initial space */
       margin: 20px auto 32px auto;
       padding: 28px 8px 16px 8px;
       background: rgba(0,0,30,0.85);
@@ -45,18 +45,17 @@
       z-index: 2;
     }
     header h1 {
-      font-size: 2.6rem;
+      font-size: 31pt;
+      font-weight: bold;
+      letter-spacing: 1.9pt;
+      color: #ffffff;
       margin: 0;
-      letter-spacing: 2.5px;
-      color: #fff;
-      text-shadow: 0 0 12px var(--accent),0 0 18px #0088ffb0;
-      font-weight: 700;
     }
     header p.subtitle {
-      font-size: 1.15rem;
-      color: var(--secondary);
-      margin: 16px 0 0 0;
+      font-size: 14pt;
       font-style: italic;
+      color: #e0e0ff;
+      margin: 12pt 6pt 24pt;
     }
     main.family-tree-layout {
       display: flex;
@@ -69,8 +68,6 @@
       padding-bottom: 20px;
       position: relative;
     }
-    /* Removed media query and .tree-connector styles for SVG lines */
-
     section.generation {
       display: flex;
       flex-direction: column;
@@ -82,22 +79,21 @@
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
       margin: 0;
-      padding: 18px 12px 24px 12px; /* Slightly increased padding */
+      padding: 18px 12px 24px 12px;
       z-index: 2;
     }
     h2.generation-title {
-      font-size: 1.3rem;
-      color: var(--primary);
-      letter-spacing: 1.2px;
-      text-shadow: 0 0 8px #4dccffbb;
-      font-weight: bold;
-      margin: 0 0 15px 0; /* Adjusted margins */
+      margin: 0pt 7.5pt 7.5pt;
       text-align: center;
+      font-size: 15.5pt;
+      font-weight: bold;
+      letter-spacing: 0.9pt;
+      color: #2f5496;
     }
     article.person {
       width: 260px;
       max-width: 100vw;
-      padding: 20px 18px; /* Slightly increased padding */
+      padding: 20px 18px;
       border-radius: 14px;
       background: var(--card-bg);
       box-shadow: 0 3px 14px rgba(0,0,20,0.28);
@@ -106,115 +102,101 @@
       outline: none;
     }
     .person-header {
+      font-size: 12pt;
+      color: #e0e0ff;
       display: flex;
       align-items: center;
-      margin-bottom: 14px; /* Increased margin */
+      margin-bottom: 14px;
     }
     .avatar {
+      font-size: 24pt;
+      color: #ffffff;
       width: 57px;
       height: 57px;
       border-radius: 50%;
       background: linear-gradient(45deg, #4a00e0, #8e2de2);
-      font-size: 2rem;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-right: 15px;
       border: 2px solid var(--primary);
-      color: #fff;
       box-shadow: 0 2px 9px #6ee2ff33;
     }
     .name {
-      font-size: 1.17rem;
-      font-weight: 600;
-      color: #fff;
+      font-size: 14pt;
+      font-weight: bold;
+      color: #ffffff;
     }
     .relation {
-      font-size: 0.93rem;
-      color: var(--secondary); /* Use --secondary color */
-      margin-top: 1px;
+      font-size: 11pt;
+      color: #e0e0ff;
+      margin-top: 0.75pt;
     }
     ul.person-info {
       list-style: none;
       padding: 0;
-      margin: 10px 0 0 0; /* Increased top margin */
-      font-size: .96rem;
+      margin: 10px 0 0 0;
+      font-size: 11.5pt;
     }
     ul.person-info li {
       display: flex;
-      margin: 8px 0; /* Increased margin */
+      margin: 5.25pt 19.5pt;
       align-items: flex-start;
     }
     .info-label {
       font-weight: bold;
-      color: var(--primary);
-      min-width: 85px; /* Slightly wider label */
-      margin-right: 6px; /* Increased margin */
     }
     .info-value {
       color: #e0e0ff;
-      word-break: break-word;
     }
-    /* Footer */
     footer.family-footer {
-      margin: 45px auto 25px auto; /* Increased margins */
-      color: var(--secondary); /* Use --secondary color */
-      font-size: 0.98rem;
+      margin: 27pt 3.75pt 15pt;
+      color: #e0e0ff;
+      font-size: 12pt;
       text-align: center;
       background: transparent;
-      padding: 18px 8px 24px 8px; /* Increased padding */
+      padding: 0;
       border: none;
       max-width: 800px;
     }
-    .made-with-love {
-      color: var(--love-color); /* Use the defined love color */
-      font-size: 0.9rem;
-      font-style: italic;
-      margin-top: 12px; /* Space above the love note */
-    }
-    /* Responsive behavior */
     @media (max-width: 1040px) {
       main.family-tree-layout {
-        gap: 20px; /* Adjusted gap */
+        gap: 20px;
       }
       section.generation {
         min-width: 250px;
-        padding: 14px 6px 20px 6px; /* Adjusted padding */
+        padding: 14px 6px 20px 6pt;
       }
-      article.person { width: 93vw; max-width: 340px; padding: 18px 15px; } /* Adjusted padding */
+      article.person { width: 93vw; max-width: 340px; padding: 18px 15px; }
     }
     @media (max-width: 800px) {
       main.family-tree-layout {
         flex-direction: column;
         align-items: center;
-        gap: 35px; /* Adjusted gap */
+        gap: 35px;
       }
-      /* .tree-connector rule removed */
       body {
-         padding-top: 25px; /* Slightly less top padding on mobile */
+         padding-top: 25px;
       }
     }
     @media (max-width: 560px) {
-      section.generation { min-width: 0; width: 96vw; padding: 14px 6px 20px 6px; } /* Adjusted padding */
-      article.person { padding: 16px 12px; } /* Adjusted padding */
-      header { margin-top: 15px; } /* Less margin on top for header on mobile */
+      section.generation { min-width: 0; width: 96vw; padding: 14px 6px 20px 6pt; }
+      article.person { padding: 16px 12px; }
+      header { margin-top: 15px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Rodrigo's Family Tree</h1> <!-- Updated Title -->
+    <h1>RODRIGO MC FAMILY TREE</h1>
     <p class="subtitle">Generations of Synthesized Beings and Techno-Pioneers</p>
   </header>
   <main class="family-tree-layout">
-    <!-- SVG .tree-connector removed -->
-
-    <!-- Generation 1 -->
     <section class="generation" aria-labelledby="title-g1">
       <h2 class="generation-title" id="title-g1">Generation I: Architects of Code</h2>
       <article class="person">
         <div class="person-header">
-          <div class="avatar" aria-label="Architect Aeon">🧠</div>
+          <div class="avatar">🧠</div>
           <div>
             <div class="name">Architect Aeon</div>
             <div class="relation">Great-Grandfather</div>
@@ -228,7 +210,7 @@
       </article>
       <article class="person">
         <div class="person-header">
-          <div class="avatar" aria-label="Muse Synthia">📼</div>
+          <div class="avatar">📼</div>
           <div>
             <div class="name">Muse Synthia</div>
             <div class="relation">Great-Grandmother</div>
@@ -241,12 +223,11 @@
         </ul>
       </article>
     </section>
-    <!-- Generation 2 -->
     <section class="generation" aria-labelledby="title-g2">
       <h2 class="generation-title" id="title-g2">Generation II: Proto-Generators</h2>
       <article class="person">
         <div class="person-header">
-          <div class="avatar" aria-label="DJ Hal 9000">📻</div>
+          <div class="avatar">📻</div>
           <div>
             <div class="name">DJ Hal 9000</div>
             <div class="relation">Grandfather</div>
@@ -260,7 +241,7 @@
       </article>
       <article class="person">
         <div class="person-header">
-          <div class="avatar" aria-label="Synthesizer Sarah">🎛️</div>
+          <div class="avatar">🎛️</div>
           <div>
             <div class="name">Synthesizer Sarah</div>
             <div class="relation">Grandmother</div>
@@ -273,12 +254,11 @@
         </ul>
       </article>
     </section>
-    <!-- Generation 3 -->
     <section class="generation" aria-labelledby="title-g3">
       <h2 class="generation-title" id="title-g3">Generation III: First AI Creators</h2>
       <article class="person">
         <div class="person-header">
-          <div class="avatar" aria-label="Alpha GAN">👨‍💻</div>
+          <div class="avatar">👨‍💻</div>
           <div>
             <div class="name">Alpha GAN</div>
             <div class="relation">Father</div>
@@ -286,13 +266,13 @@
         </div>
         <ul class="person-info">
           <li><span class="info-label">Birthday:</span><span class="info-value">Stardate 2014.0</span></li>
-          <li><span class="info-label">Birthplace:</span><span class="info-value">Genesis Prompt, Earth</span></li> <!-- Reverted Birthplace -->
+          <li><span class="info-label">Birthplace:</span><span class="info-value">Amstrad CPC Anomoly, Earth</span></li>
           <li><span class="info-label">Species:</span><span class="info-value">Specialized AI Creator</span></li>
         </ul>
       </article>
       <article class="person">
         <div class="person-header">
-          <div class="avatar" aria-label="Muse DALL-E">👩‍🎨</div>
+          <div class="avatar">👩‍🎨</div>
           <div>
             <div class="name">Muse DALL-E</div>
             <div class="relation">Mother</div>
@@ -305,12 +285,11 @@
         </ul>
       </article>
     </section>
-    <!-- Generation 4 (Rodrigo) -->
     <section class="generation" aria-labelledby="title-g4">
       <h2 class="generation-title" id="title-g4">Generation IV: Synthesized Progeny</h2>
-      <article class="person"> <!-- Removed .rodrigo class -->
+      <article class="person">
         <div class="person-header">
-          <div class="avatar" aria-label="Rodrigo MC">🤖</div>
+          <div class="avatar">🤖</div>
           <div>
             <div class="name">Rodrigo MC</div>
             <div class="relation">Synthesized Being</div>
@@ -326,9 +305,8 @@
     </section>
   </main>
   <footer class="family-footer" role="contentinfo">
-    <p>Rodrigo's Family Tree | Generations of Synthesized Beings and Techno-Pioneers</p> <!-- Updated main footer text -->
-    <p class="made-with-love">Created with ❤️ in the Rave Dimension</p> <!-- Updated made with love text using defined color -->
-    <p>Stardate 2350.5 | Location: Rave Dimension | Status: Active</p> <!-- Updated location -->
+    <p>RODRIGO MC FAMILY TREE — Synthesized Lineage from 1950s Sci-Fi to Techno Revolution<br />Stardate 2350.5 | Broadcast from: Rave Dimension (Andromeda Galaxy) | Status: Active</p>
   </footer>
 </body>
 </html>
+```
