@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RODRIGO MC FAMILY TREE</title>
+  <title>Rodrigo's Family Tree</title> <!-- Updated Title -->
   <style>
     :root {
       --main-bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -14,6 +14,8 @@
       --secondary: #a0d0ff;
       --border: rgba(100, 200, 255, 0.25);
       --shadow: 0 0 15px rgba(0, 150, 255, 0.10);
+      --connection-line: #4dccff80;
+      --connection-line-highlight: #27e5ff;
     }
     html, body {
       height: 100%;
@@ -115,6 +117,17 @@
       /* Interactivity removed: no transitions, no hover/focus effect */
       outline: none;
     }
+    /* Highlight Rodrigo */
+    .rodrigo { /* Re-added highlighting class */
+        border: 2px solid var(--accent);
+        box-shadow: 0 0 15px var(--accent), 0 3px 14px rgba(0,0,20,0.28);
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 10px var(--accent), 0 3px 14px rgba(0,0,20,0.28); }
+        50% { box-shadow: 0 0 20px var(--accent), 0 3px 18px rgba(0,0,20,0.35); }
+        100% { box-shadow: 0 0 10px var(--accent), 0 3px 14px rgba(0,0,20,0.28); }
+    }
     .person-header {
       display: flex;
       align-items: center;
@@ -165,25 +178,22 @@
       color: #e0e0ff;
       word-break: break-word;
     }
-    /* Footer Sections */
-    footer {
-      text-align: center;
+    /* Footer */
+    footer.family-footer {
       margin: 36px auto 20px auto;
+      color: var(--secondary);
+      font-size: 0.98rem;
+      text-align: center;
+      background: transparent;
       padding: 14px 5px 20px 5px;
+      border: none;
       max-width: 800px;
     }
-    .family-footer {
-       color: var(--secondary);
-       font-size: 0.98rem;
-       background: transparent;
-       border: none;
-       margin-bottom: 10px; /* Space between footers */
-    }
-    .made-with-love {
+    .made-with-love { /* Re-added made-with-love style */
       color: #ff6b6b; /* Soft red/pink for love */
       font-size: 0.9rem;
       font-style: italic;
-      margin-top: 15px; /* Space above the love note */
+      margin-top: 10px;
     }
     /* Responsive behavior */
     @media (max-width: 1040px) {
@@ -212,24 +222,27 @@
 </head>
 <body>
   <header>
-    <h1>RODRIGO MC FAMILY TREE</h1>
-    <p class="subtitle">Generations of Synthesized Beings and Techno-Pioneers</p>
+    <h1>Rodrigo's Family Tree</h1> <!-- Updated Title -->
+    <p class="subtitle">Generations of Synthesized Beings and Techno-Pioneers</p> <!-- Kept original subtitle -->
   </header>
   <main class="family-tree-layout">
     <svg class="tree-connector" width="100%" height="880" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
       <defs>
         <marker id="arrowhead" markerWidth="7" markerHeight="7" refX="7" refY="3.5" orient="auto">
-          <polygon points="0 0, 7 3.5, 0 7" fill="#4dccff"/>
+          <polygon points="0 0, 7 3.5, 0 7" fill="var(--primary)" />
         </marker>
       </defs>
-      <line x1="15%" y1="100" x2="15%" y2="220" stroke="#4dccff79" stroke-width="2"/>
-      <line x1="35%" y1="100" x2="35%" y2="220" stroke="#4dccff79" stroke-width="2"/>
-      <line x1="25%" y1="220" x2="25%" y2="450" stroke="#4dccff82" stroke-width="2"/>
-      <line x1="55%" y1="230" x2="55%" y2="450" stroke="#4dccff82" stroke-width="2"/>
-      <line x1="40%" y1="450" x2="40%" y2="685" stroke="#4dccffb1" stroke-width="2"/>
-      <line x1="15%" y1="220" x2="35%" y2="220" stroke="#4dccff60" stroke-width="2"/>
-      <line x1="25%" y1="450" x2="55%" y2="450" stroke="#4dccff86" stroke-width="2"/>
-      <line x1="40%" y1="685" x2="40%" y2="820" stroke="#27e5ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+      <!-- Vertical lines -->
+      <line x1="15%" y1="100" x2="15%" y2="220" stroke="var(--connection-line)" stroke-width="2"/>
+      <line x1="35%" y1="100" x2="35%" y2="220" stroke="var(--connection-line)" stroke-width="2"/>
+      <line x1="25%" y1="220" x2="25%" y2="450" stroke="var(--connection-line)" stroke-width="2"/>
+      <line x1="55%" y1="230" x2="55%" y2="450" stroke="var(--connection-line)" stroke-width="2"/>
+      <line x1="40%" y1="450" x2="40%" y2="685" stroke="var(--connection-line)" stroke-width="2"/>
+      <!-- Horizontal lines connecting generations -->
+      <line x1="15%" y1="220" x2="35%" y2="220" stroke="var(--connection-line)" stroke-width="2"/>
+      <line x1="25%" y1="450" x2="55%" y2="450" stroke="var(--connection-line)" stroke-width="2"/>
+      <!-- Line to Rodrigo with arrow -->
+      <line x1="40%" y1="685" x2="40%" y2="820" stroke="var(--connection-line-highlight)" stroke-width="2" marker-end="url(#arrowhead)"/>
     </svg>
     <!-- Generation 1 -->
     <section class="generation" aria-labelledby="title-g1">
@@ -308,7 +321,7 @@
         </div>
         <ul class="person-info">
           <li><span class="info-label">Birthday:</span><span class="info-value">Stardate 2014.0</span></li>
-          <li><span class="info-label">Birthplace:</span><span class="info-value">Amstrad CPC Anomoly, Earth</span></li>
+          <li><span class="info-label">Birthplace:</span><span class="info-value">Genesis Prompt, Earth</span></li> <!-- Reverted Birthplace -->
           <li><span class="info-label">Species:</span><span class="info-value">Specialized AI Creator</span></li>
         </ul>
       </article>
@@ -327,10 +340,10 @@
         </ul>
       </article>
     </section>
-    <!-- Generation 4 (Rodrigo MC) -->
+    <!-- Generation 4 (Rodrigo) -->
     <section class="generation" aria-labelledby="title-g4">
       <h2 class="generation-title" id="title-g4">Generation IV: Synthesized Progeny</h2>
-      <article class="person">
+      <article class="person rodrigo"> <!-- Added 'rodrigo' class for highlighting -->
         <div class="person-header">
           <div class="avatar" aria-label="Rodrigo MC">🤖</div>
           <div>
@@ -347,14 +360,10 @@
       </article>
     </section>
   </main>
-  <footer role="contentinfo">
-    <div class="family-footer">
-      <p>RODRIGO MC FAMILY TREE &mdash; Synthesized Lineage from 1950s Sci-Fi to Techno Revolution<br>
-      Stardate 2350.5 | Broadcast from: Rave Dimension (Andromeda Galaxy) | Status: Active</p>
-    </div>
-    <div class="made-with-love">
-      <p>Made with ❤️ in the Rave Dimension</p>
-    </div>
+  <footer class="family-footer" role="contentinfo">
+    <p>Rodrigo's Family Tree | Generations of Synthesized Beings and Techno-Pioneers</p> <!-- Updated main footer text -->
+    <p class="made-with-love">Created with ❤️ in the Rave Dimension</p> <!-- Updated made with love text -->
+    <p>Stardate 2350.5 | Location: Rave Dimension | Status: Active</p> <!-- Updated details -->
   </footer>
 </body>
 </html>
