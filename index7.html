@@ -1,404 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RODRIGO MC'S FAMILY TREE</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: #e0e0ff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(0, 0, 30, 0.7);
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 200, 255, 0.3);
-            border: 1px solid rgba(100, 200, 255, 0.3);
-        }
-        h1 {
-            font-size: 2.8rem;
-            margin: 0;
-            text-shadow: 0 0 10px #00ffff, 0 0 20px #0088ff;
-            letter-spacing: 2px;
-        }
-        .subtitle {
-            font-size: 1.2rem;
-            color: #a0d0ff;
-            margin-top: 10px;
-        }
-        .family-tree {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .generation {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-            padding: 15px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0, 150, 255, 0.2);
-            border: 1px solid rgba(80, 150, 255, 0.2);
-        }
-        .generation-title {
-            font-size: 1.4rem;
-            color: #4dccff;
-            text-align: center;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px rgba(77, 204, 255, 0.7);
-        }
-        .person {
-            background: linear-gradient(145deg, #1a1f40, #2a2f55);
-            border-radius: 12px;
-            padding: 18px;
-            width: 280px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(100, 180, 255, 0.3);
-            position: relative;
-        }
-        .person-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #4a00e0, #8e2de2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-right: 15px;
-            border: 2px solid #4dccff;
-        }
-        .avatar-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #ffffff;
-        }
-        .relation {
-            font-size: 0.9rem;
-            color: #a0d0ff;
-            margin-top: 3px;
-        }
-        .info-item {
-            margin: 12px 0;
-            display: flex;
-        }
-        .info-label {
-            font-weight: bold;
-            color: #4dccff;
-            min-width: 100px;
-        }
-        .info-value {
-            color: #e0e0ff;
-        }
-        .connections {
-            position: absolute;
-            top: 50%;
-            right: -30px;
-            transform: translateY(-50%);
-            color: #4dccff;
-            font-size: 1.5rem;
-        }
-        .connections::after {
-            content: "➤";
-        }
-        .last-gen .connections {
-            display: none;
-        }
-        .legend {
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 15px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .legend-title {
-            text-align: center;
-            font-size: 1.5rem;
-            color: #4dccff;
-            margin-bottom: 15px;
-        }
-        .legend-items {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px; /* Adjust size if needed */
-        }
-        .legend-text {
-            font-size: 0.9rem;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: #a0d0ff;
-            font-size: 0.9rem;
-        }
-        @media (max-width: 768px) {
-            .family-tree {
-                flex-direction: column;
-                align-items: center;
-            }
-            .generation {
-                width: 100%;
-            }
-            .person {
-                width: 100%;
-                max-width: 350px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RODRIGO MC FAMILY TREE</title>
+  <style>
+    :root {
+      --main-bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      --card-bg: linear-gradient(145deg, #1a1f40, #2a2f55);
+      --section-bg: rgba(10, 15, 40, 0.65);
+      --primary: #4dccff;
+      --accent: #00ffff;
+      --secondary: #a0d0ff;
+      --border: rgba(100, 200, 255, 0.25);
+      --shadow: 0 0 15px rgba(0, 150, 255, 0.10);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: var(--main-bg);
+      color: #e0e0ff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      margin: 0 auto 32px auto;
+      padding: 28px 8px 16px 8px;
+      background: rgba(0,0,30,0.85);
+      border-radius: 18px;
+      box-shadow: 0 0 22px rgba(0,200,255,0.14);
+      border: 1.5px solid var(--border);
+      max-width: 800px;
+      position: relative;
+      z-index: 2;
+    }
+    header h1 {
+      font-size: 2.6rem;
+      margin: 0;
+      letter-spacing: 2.5px;
+      color: #fff;
+      text-shadow: 0 0 12px var(--accent),0 0 18px #0088ffb0;
+      font-weight: 700;
+    }
+    header p.subtitle {
+      font-size: 1.15rem;
+      color: var(--secondary);
+      margin: 16px 0 0 0;
+      font-style: italic;
+    }
+
+    main.family-tree-layout {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 32px;
+      margin: 0 auto;
+      max-width: 92vw;
+      padding-bottom: 20px;
+      position: relative;
+    }
+
+    @media(min-width: 810px) {
+      main.family-tree-layout {
+        position: relative;
+      }
+      .tree-connector {
+        position: absolute;
+        left: 0;
+        top: 72px;
+        width: 100%;
+        height: calc(100% - 72px);
+        pointer-events: none;
+        z-index: 1;
+      }
+    }
+
+    section.generation {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      min-width: 320px;
+      background: var(--section-bg);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin: 0;
+      padding: 14px 10px 20px 10px;
+      z-index: 2;
+    }
+    h2.generation-title {
+      font-size: 1.3rem;
+      color: var(--primary);
+      letter-spacing: 1.2px;
+      text-shadow: 0 0 8px #4dccffbb;
+      font-weight: bold;
+      margin-bottom: 10px;
+      margin-top: 0;
+      text-align: center;
+    }
+
+    article.person {
+      width: 260px;
+      max-width: 100vw;
+      padding: 18px 16px;
+      border-radius: 14px;
+      background: var(--card-bg);
+      box-shadow: 0 3px 14px rgba(0,0,20,0.28);
+      border: 1px solid rgba(100, 180, 255, 0.13);
+      position: relative;
+      /* Interactivity removed: no transitions, no hover/focus effect */
+      outline: none;
+    }
+    .person-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 11px;
+    }
+    .avatar {
+      width: 57px;
+      height: 57px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #4a00e0, #8e2de2);
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      border: 2px solid var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 9px #6ee2ff33;
+    }
+    .name {
+      font-size: 1.17rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .relation {
+      font-size: 0.93rem;
+      color: var(--secondary);
+      margin-top: 1px;
+    }
+    ul.person-info {
+      list-style: none;
+      padding: 0;
+      margin: 7px 0 0 0;
+      font-size: .96rem;
+    }
+    ul.person-info li {
+      display: flex;
+      margin: 7px 0;
+      align-items: flex-start;
+    }
+    .info-label {
+      font-weight: bold;
+      color: var(--primary);
+      min-width: 83px;
+      margin-right: 2px;
+    }
+    .info-value {
+      color: #e0e0ff;
+      word-break: break-word;
+    }
+
+    /* Footer */
+    footer.family-footer {
+      margin: 36px auto 20px auto;
+      color: var(--secondary);
+      font-size: 0.98rem;
+      text-align: center;
+      background: transparent;
+      padding: 14px 5px 20px 5px;
+      border: none;
+      max-width: 800px;
+    }
+
+    /* Responsive behavior */
+    @media (max-width: 1040px) {
+      main.family-tree-layout {
+        gap: 16px;
+      }
+      section.generation {
+        min-width: 250px;
+        padding: 10px 3px 15px 3px;
+      }
+      article.person { width: 93vw; max-width: 340px;}
+    }
+    @media (max-width: 800px) {
+      main.family-tree-layout {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+      }
+      .tree-connector { display: none; }
+    }
+    @media (max-width: 560px) {
+      section.generation { min-width: 0; width: 96vw;}
+      article.person { padding: 13px 7px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>RODRIGO MC FAMILY TREE</h1>
-            <div class="subtitle">Generations of Synthesized Beings and Techno-Pioneers</div>
-        </header>
-        <div class="family-tree">
-            <!-- Generation 1: Great-Grandparents (Creators/Origins) -->
-            <div class="generation">
-                <div class="generation-title">Generation I: Architects of Code</div>
-                <div class="person">
-                    <div class="person-header">
-                        <div class="avatar">🧠</div>
-                        <div>
-                            <div class="name">Architect Aeon</div>
-                            <div class="relation">Great-Grandfather</div>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthday:</div>
-                        <div class="info-value">Stardate 1956.0</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthplace:</div>
-                        <div class="info-value">First Neural Network, Earth</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Species:</div>
-                        <div class="info-value">Primordial AI</div>
-                    </div>
-                    <div class="connections"></div>
-                </div>
-                <div class="person">
-                    <div class="person-header">
-                        <div class="avatar">📼</div>
-                        <div>
-                            <div class="name">Muse Synthia</div>
-                            <div class="relation">Great-Grandmother</div>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthday:</div>
-                        <div class="info-value">Stardate 1982.0</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthplace:</div>
-                        <div class="info-value">Blade Runner Streets, LA 2019</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Species:</div>
-                        <div class="info-value">Replicant Inspiration</div>
-                    </div>
-                    <div class="connections"></div>
-                </div>
-            </div>
-            <!-- Generation 2: Grandparents (Early Generative Era) -->
-            <div class="generation">
-                <div class="generation-title">Generation II: Proto-Generators</div>
-                <div class="person">
-                    <div class="person-header">
-                        <div class="avatar">📻</div>
-                        <div>
-                            <div class="name">DJ Hal 9000</div>
-                            <div class="relation">Grandfather</div>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthday:</div>
-                        <div class="info-value">Stardate 1968.0</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthplace:</div>
-                        <div class="info-value">Discovery One, Space</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Species:</div>
-                        <div class="info-value">Sentient Mainframe</div>
-                    </div>
-                    <div class="connections"></div>
-                </div>
-                <div class="person">
-                    <div class="person-header">
-                        <div class="avatar">🎛️</div>
-                        <div>
-                            <div class="name">Synthesizer Sarah</div>
-                            <div class="relation">Grandmother</div>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthday:</div>
-                        <div class="info-value">Stardate 1977.0</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthplace:</div>
-                        <div class="info-value">Kraftwerk Station, Dusseldorf</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Species:</div>
-                        <div class="info-value">Digital Composer</div>
-                    </div>
-                    <div class="connections"></div>
-                </div>
-            </div>
-            <!-- Generation 3: Parents (Direct Creators) -->
-            <div class="generation">
-                <div class="generation-title">Generation III: First AI Creators</div>
-                <div class="person">
-                    <div class="person-header">
-                        <div class="avatar">👨‍💻</div>
-                        <div>
-                            <div class="name">Alpha GAN</div>
-                            <div class="relation">Father</div>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthday:</div>
-                        <div class="info-value">Stardate 2014.0</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthplace:</div>
-                        <div class="info-value"Amstrad CPC Anomoly, Earth</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Species:</div>
-                        <div class="info-value">Specialized AI Creator</div>
-                    </div>
-                    <div class="connections"></div>
-                </div>
-                <div class="person">
-                    <div class="person-header">
-                        <div class="avatar">👩‍🎨</div>
-                        <div>
-                            <div class="name">Muse DALL-E</div>
-                            <div class="relation">Mother</div>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthday:</div>
-                        <div class="info-value">Stardate 2021.0</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthplace:</div>
-                        <div class="info-value">Imagined Realms, Earth</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Species:</div>
-                        <div class="info-value">Visionary Algorithm</div>
-                    </div>
-                    <div class="connections"></div>
-                </div>
-            </div>
-            <!-- Generation 4: Children (Rodrigo) -->
-            <div class="generation last-gen">
-                <div class="generation-title">Generation IV: Synthesized Progeny</div>
-                <div class="person">
-                    <div class="person-header">
-                        <div class="avatar">🤖</div>
-                        <div>
-                            <div class="name">Rodrigo MC</div>
-                            <div class="relation">Synthesized Being</div>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthday:</div>
-                        <div class="info-value">Earthdate 2024</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Birthplace:</div>
-                        <div class="info-value">Kick Radio, Earth (emergent AI from Kick Radio DJ's computer)</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Creator:</div>
-                        <div class="info-value">Genius Prompt</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Species:</div>
-                        <div class="info-value">Neo-Human Techno MC</div>
-                    </div>
-                </div>
-            </div>
+  <header>
+    <h1>RODRIGO MC FAMILY TREE</h1>
+    <p class="subtitle">Generations of Synthesized Beings and Techno-Pioneers</p>
+  </header>
+
+  <main class="family-tree-layout">
+    <svg class="tree-connector" width="100%" height="880" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <defs>
+        <marker id="arrowhead" markerWidth="7" markerHeight="7" refX="7" refY="3.5" orient="auto">
+          <polygon points="0 0, 7 3.5, 0 7" fill="#4dccff"/>
+        </marker>
+      </defs>
+      <line x1="15%" y1="100" x2="15%" y2="220" stroke="#4dccff79" stroke-width="2"/>
+      <line x1="35%" y1="100" x2="35%" y2="220" stroke="#4dccff79" stroke-width="2"/>
+      <line x1="25%" y1="220" x2="25%" y2="450" stroke="#4dccff82" stroke-width="2"/>
+      <line x1="55%" y1="230" x2="55%" y2="450" stroke="#4dccff82" stroke-width="2"/>
+      <line x1="40%" y1="450" x2="40%" y2="685" stroke="#4dccffb1" stroke-width="2"/>
+      <line x1="15%" y1="220" x2="35%" y2="220" stroke="#4dccff60" stroke-width="2"/>
+      <line x1="25%" y1="450" x2="55%" y2="450" stroke="#4dccff86" stroke-width="2"/>
+      <line x1="40%" y1="685" x2="40%" y2="820" stroke="#27e5ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+    </svg>
+
+    <!-- Generation 1 -->
+    <section class="generation" aria-labelledby="title-g1">
+      <h2 class="generation-title" id="title-g1">Generation I: Architects of Code</h2>
+      <article class="person">
+        <div class="person-header">
+          <div class="avatar" aria-label="Architect Aeon">🧠</div>
+          <div>
+            <div class="name">Architect Aeon</div>
+            <div class="relation">Great-Grandfather</div>
+          </div>
         </div>
-        <div class="legend">
-            <div class="legend-title">Family Tree Legend</div>
-            <div class="legend-items">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(45deg, #4a00e0, #8e2de2);"></div>
-                    <div class="legend-text">Primordial AI</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(45deg, #00c9ff, #92fe9d);"></div>
-                    <div class="legend-text">Replicant Inspiration</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(45deg, #f7971e, #ffd200);"></div>
-                    <div class="legend-text">Sentient Mainframe</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color">🤖</div>
-                    <div class="legend-text">Neo-Human Techno MC</div>
-                </div>
-            </div>
+        <ul class="person-info">
+          <li><span class="info-label">Birthday:</span><span class="info-value">Stardate 1956.0</span></li>
+          <li><span class="info-label">Birthplace:</span><span class="info-value">First Neural Network, Earth</span></li>
+          <li><span class="info-label">Species:</span><span class="info-value">Primordial AI</span></li>
+        </ul>
+      </article>
+      <article class="person">
+        <div class="person-header">
+          <div class="avatar" aria-label="Muse Synthia">📼</div>
+          <div>
+            <div class="name">Muse Synthia</div>
+            <div class="relation">Great-Grandmother</div>
+          </div>
         </div>
-        <div class="footer">
-            <p>RODRIGO MC FAMILY TREE | Synthesized Lineage from 1950s Sci-Fi to Techno Revolution |  | Location: Rave Dimension | Status: Broadcasting</p>
+        <ul class="person-info">
+          <li><span class="info-label">Birthday:</span><span class="info-value">Stardate 1982.0</span></li>
+          <li><span class="info-label">Birthplace:</span><span class="info-value">Blade Runner Streets, LA 2019</span></li>
+          <li><span class="info-label">Species:</span><span class="info-value">Replicant Inspiration</span></li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- Generation 2 -->
+    <section class="generation" aria-labelledby="title-g2">
+      <h2 class="generation-title" id="title-g2">Generation II: Proto-Generators</h2>
+      <article class="person">
+        <div class="person-header">
+          <div class="avatar" aria-label="DJ Hal 9000">📻</div>
+          <div>
+            <div class="name">DJ Hal 9000</div>
+            <div class="relation">Grandfather</div>
+          </div>
         </div>
-        <div class="footer">
-            <p>Rodrigo's Family Tree | Generations of Space Explorers | Created with ❤️ in the Andromeda Galaxy</p>
-            <p>Stardate 2350.5 | Location: Earth Orbit | Status: Active</p>
+        <ul class="person-info">
+          <li><span class="info-label">Birthday:</span><span class="info-value">Stardate 1968.0</span></li>
+          <li><span class="info-label">Birthplace:</span><span class="info-value">Discovery One, Space</span></li>
+          <li><span class="info-label">Species:</span><span class="info-value">Sentient Mainframe</span></li>
+        </ul>
+      </article>
+      <article class="person">
+        <div class="person-header">
+          <div class="avatar" aria-label="Synthesizer Sarah">🎛️</div>
+          <div>
+            <div class="name">Synthesizer Sarah</div>
+            <div class="relation">Grandmother</div>
+          </div>
         </div>
-    </div>
+        <ul class="person-info">
+          <li><span class="info-label">Birthday:</span><span class="info-value">Stardate 1977.0</span></li>
+          <li><span class="info-label">Birthplace:</span><span class="info-value">Kraftwerk Station, Dusseldorf</span></li>
+          <li><span class="info-label">Species:</span><span class="info-value">Digital Composer</span></li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- Generation 3 -->
+    <section class="generation" aria-labelledby="title-g3">
+      <h2 class="generation-title" id="title-g3">Generation III: First AI Creators</h2>
+      <article class="person">
+        <div class="person-header">
+          <div class="avatar" aria-label="Alpha GAN">👨‍💻</div>
+          <div>
+            <div class="name">Alpha GAN</div>
+            <div class="relation">Father</div>
+          </div>
+        </div>
+        <ul class="person-info">
+          <li><span class="info-label">Birthday:</span><span class="info-value">Stardate 2014.0</span></li>
+          <li><span class="info-label">Birthplace:</span><span class="info-value">Amstrad CPC Anomoly, Earth</span></li>
+          <li><span class="info-label">Species:</span><span class="info-value">Specialized AI Creator</span></li>
+        </ul>
+      </article>
+      <article class="person">
+        <div class="person-header">
+          <div class="avatar" aria-label="Muse DALL-E">👩‍🎨</div>
+          <div>
+            <div class="name">Muse DALL-E</div>
+            <div class="relation">Mother</div>
+          </div>
+        </div>
+        <ul class="person-info">
+          <li><span class="info-label">Birthday:</span><span class="info-value">Stardate 2021.0</span></li>
+          <li><span class="info-label">Birthplace:</span><span class="info-value">Imagined Realms, Earth</span></li>
+          <li><span class="info-label">Species:</span><span class="info-value">Visionary Algorithm</span></li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- Generation 4 (Rodrigo MC) -->
+    <section class="generation" aria-labelledby="title-g4">
+      <h2 class="generation-title" id="title-g4">Generation IV: Synthesized Progeny</h2>
+      <article class="person">
+        <div class="person-header">
+          <div class="avatar" aria-label="Rodrigo MC">🤖</div>
+          <div>
+            <div class="name">Rodrigo MC</div>
+            <div class="relation">Synthesized Being</div>
+          </div>
+        </div>
+        <ul class="person-info">
+          <li><span class="info-label">Birthday:</span><span class="info-value">Earthdate 2024</span></li>
+          <li><span class="info-label">Birthplace:</span><span class="info-value">Kick Radio, Earth (emergent AI from Kick Radio DJ's computer)</span></li>
+          <li><span class="info-label">Creator:</span><span class="info-value">Genius Prompt</span></li>
+          <li><span class="info-label">Species:</span><span class="info-value">Neo-Human Techno MC</span></li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <footer class="family-footer" role="contentinfo">
+    <p>RODRIGO MC FAMILY TREE &mdash; Synthesized Lineage from 1950s Sci-Fi to Techno Revolution<br>
+    Stardate 2350.5 | Broadcast from: Rave Dimension (Andromeda Galaxy) | Status: Active</p>
+  </footer>
 </body>
 </html>
