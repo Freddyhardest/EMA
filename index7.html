@@ -87,7 +87,6 @@
             font-size: 24px;
             margin-right: 15px;
             border: 2px solid #4dccff;
-            flex-shrink: 0; /* Prevents avatar from shrinking */
         }
         .avatar-img {
             width: 100%;
@@ -161,17 +160,10 @@
             width: 20px;
             height: 20px;
             border-radius: 4px;
-            /* Ensure it can hold the avatar */
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden; /* Ensures image stays within bounds */
-        }
-        /* Specific style for Rodrigo's avatar in the legend */
-        .legend-rodrigo-avatar {
-             width: 100%;
-             height: 100%;
-             object-fit: cover;
+            font-size: 16px; /* Adjust size if needed */
         }
         .legend-text {
             font-size: 0.9rem;
@@ -354,9 +346,7 @@
                 <div class="generation-title">Generation IV: Synthesized Progeny</div>
                 <div class="person">
                     <div class="person-header">
-                        <div class="avatar">
-                            <img src="https://opengameart.org/sites/default/files/styles/medium/public/robo01.gif" alt="Rodrigo" class="avatar-img">
-                        </div>
+                        <div class="avatar">🤖</div>
                         <div>
                             <div class="name">Rodrigo MC</div>
                             <div class="relation">Synthesized Being</div>
@@ -396,11 +386,8 @@
                     <div class="legend-color" style="background: linear-gradient(45deg, #f7971e, #ffd200);"></div>
                     <div class="legend-text">Sentient Mainframe</div>
                 </div>
-                <!-- Legend item for Rodrigo's species, using his avatar -->
                 <div class="legend-item">
-                    <div class="legend-color">
-                        <img src="https://opengameart.org/sites/default/files/styles/medium/public/robo01.gif" alt="Rodrigo Avatar" class="legend-rodrigo-avatar">
-                    </div>
+                    <div class="legend-color">🤖</div>
                     <div class="legend-text">Neo-Human Techno MC</div>
                 </div>
             </div>
