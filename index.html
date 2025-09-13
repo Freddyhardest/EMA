@@ -61,13 +61,13 @@
     <div class="instructions">
         <h2>Development & Iteration Guide</h2>
         <ul>
-            <li><strong>Place Your DSK File:</strong> Upload your Amstrad CPC disk file (e.g., <code>the_abzu.dsk</code>) to the root directory of your GitHub repository alongside this <code>index.html</code> file.</li>
+            <li><strong>Place Your DSK File:</strong> Upload your Amstrad CPC disk file (e.g., <code>sbzu.dsk</code>) to the root directory of your GitHub repository alongside this <code>index.html</code> file.</li>
             <li><strong>Update the Code:</strong> Modify the <code>dskFileName</code> variable in the JavaScript code below to match the exact name of your DSK file.</li>
             <li><strong>Configure Startup:</strong> Adjust the <code>startupCommand</code> string if you want the emulator to automatically run a specific program on the disk (e.g., <code>'run"mygame\n'</code>). Currently set to auto-run the disc.</li>
             <li><strong>Fast Loading:</strong> The emulator is configured to run in fast mode for 20 seconds (<code>warpFrames: 20 * 50</code>) to speed up boot/loading.</li>
             <li><strong>Iterate Quickly:</strong>
                 <ul>
-                    <li>Replace your <code>the_abzu.dsk</code> file in the repository.</li>
+                    <li>Replace your <code>sbzu.dsk</code> file in the repository.</li>
                     <li>Refresh this page in your browser. The emulator will load the new version.</li>
                     <li>Modify <code>startupCommand</code> or <code>warpFrames</code> directly in this code as needed without changing the layout.</li>
                 </ul>
@@ -76,7 +76,7 @@
             <li><strong>Deployment:</strong> Push this file and your DSK to your GitHub repository configured for GitHub Pages.</li>
             <li><strong>Note:</strong> This emulator requires a modern desktop browser with a good GPU. It will <em>not</em> run on mobile (iOS/Android) devices.</li>
             <li><strong>Licensing:</strong> RVMPlayer is licensed under the BSD-3-Clause License.</li>
-            <li><THE ABZU by Amskid and Qwen 3 Coder for RVM. See <a href="https://www.retrovirtualmachine.org/rvmplayer/" target="_blank">RVMPlayer website</a> for details.</li></li>
+            <li><strong>THE ABZU by Amskid and Qwen 3 Coder for RVM.</strong> See <a href="https://www.retrovirtualmachine.org/rvmplayer/" target="_blank">RVMPlayer website</a> for details.</li>
         </ul>
     </div>
 
@@ -94,8 +94,8 @@
             }
 
             // --- Configuration for Fast Development ---
-            // Replace 'the_abzu.dsk' with the actual name of your DSK file in the repository
-            const dskFileName = 'the_abzu.dsk';
+            // Replace 'sbzu.dsk' with the actual name of your DSK file in the repository
+            const dskFileName = 'sbzu.dsk';
 
             // Command to run on startup. '\n' represents the Enter key.
             // Example to run a specific program: 'run"mygame\n'
