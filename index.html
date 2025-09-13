@@ -1,27 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>JavaScript Speech Synthesis Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE ABZU - Amstrad CPC 6128 Development</title>
+    <!-- Reference the most stable version of RVMPlayer for Amstrad CPC 6128 -->
+    <script src="https://cdn.rvmplayer.org/rvmplayer.cpc6128.0.1.1.min.js"></script>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #1a1a1a; /* Darker background */
+            color: #00ff00; /* Matrix green text */
+        }
+        .container {
+            /* Use a fixed-size container for the 4:3 aspect ratio */
+            position: relative;
+            width: 800px;
+            height: 600px;
+            border: 2px solid #00ff00; /* Green border */
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); /* Glowing effect */
+            margin-bottom: 20px;
+        }
+        .instructions {
+            margin-top: 20px;
+            max-width: 800px;
+            background-color: #001a00; /* Darker green background */
+            padding: 15px;
+            border: 1px solid #008000; /* Medium green border */
+            border-radius: 5px;
+            color: #e0e0e0; /* Lighter text */
+        }
+        code {
+            background-color: #003300;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #ffff00; /* Yellow code text */
+        }
+        a {
+           color: #00ffff; /* Cyan links */
+        }
+        a:hover {
+            color: #ffffff; /* White on hover */
+        }
+        h1, h2 {
+            text-shadow: 0 0 5px #00ff00; /* Text glow */
+        }
+    </style>
 </head>
 <body>
-  <h1>Text to Speech Demo</h1>
-  <label for="textToSpeak">Enter text:</label>
-  <input type="text" id="textToSpeak" value="Hello, this is a speech synthesis demo!">
-  <button onclick="speakText()">Speak</button>
 
-  <script>
-    function speakText() {
-      const text = document.getElementById('textToSpeak').value;
-      const synth = window.speechSynthesis;
-      const utterance = new SpeechSynthesisUtterance(text);
+    <h1>THE ABZU - Amstrad CPC 6128 Development Environment</h1>
 
-      utterance.onerror = function(event) {
-        console.error('Speech synthesis error:', event.error);
-      };
+    <!-- Fixed-size container for the emulator -->
+    <div class="container" id="emulator-container"></div>
 
-      synth.speak(utterance);
-    }
-  </script>
+    <div class="instructions">
+        <h2>Development & Iteration Guide</h2>
+        <ul>
+            <li><strong>Place Your DSK File:</strong> Upload your Amstrad CPC disk file (e.g., <code>the_abzu.dsk</code>) to the root directory of your GitHub repository alongside this <code>index.html</code> file.</li>
+            <li><strong>Update the Code:</strong> Modify the <code>dskFileName</code> variable in the JavaScript code below to match the exact name of your DSK file.</li>
+            <li><strong>Configure Startup:</strong> Adjust the <code>startupCommand</code> string if you want the emulator to automatically run a specific program on the disk (e.g., <code>'run"mygame\n'</code>). Currently set to auto-run the disc.</li>
+            <li><strong>Fast Loading:</strong> The emulator is configured to run in fast mode for 20 seconds (<code>warpFrames: 20 * 50</code>) to speed up boot/loading.</li>
+            <li><strong>Iterate Quickly:</strong>
+                <ul>
+                    <li>Replace your <code>the_abzu.dsk</code> file in the repository.</li>
+                    <li>Refresh this page in your browser. The emulator will load the new version.</li>
+                    <li>Modify <code>startupCommand</code> or <code>warpFrames</code> directly in this code as needed without changing the layout.</li>
+                </ul>
+            </li>
+            <li><strong>Debugging:</strong> Open your browser's Developer Tools (usually F12) and check the Console tab for any errors related to loading the disk or running the emulator.</li>
+            <li><strong>Deployment:</strong> Push this file and your DSK to your GitHub repository configured for GitHub Pages.</li>
+            <li><strong>Note:</strong> This emulator requires a modern desktop browser with a good GPU. It will <em>not</em> run on mobile (iOS/Android) devices.</li>
+            <li><strong>Licensing:</strong> RVMPlayer is licensed under the BSD-3-Clause License. See <a href="https://www.retrovirtualmachine.org/rvmplayer/" target="_blank">RVMPlayer website</a> for details.</li>
+        </ul>
+    </div>
+
+    <script>
+        // Wait for the page to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select the container element
+            const container = document.querySelector('#emulator-container');
+
+            // Check if the container exists
+            if (!container) {
+                console.error("Emulator container not found!");
+                alert("Error: Emulator container element missing in HTML.");
+                return;
+            }
+
+            // --- Configuration for Fast Development ---
+            // Replace 'the_abzu.dsk' with the actual name of your DSK file in the repository
+            const dskFileName = 'the_abzu.dsk';
+
+            // Command to run on startup. '\n' represents the Enter key.
+            // Example to run a specific program: 'run"mygame\n'
+            // Auto-run the disc for most games/homebrew:
+            const startupCommand = 'run"disc\n';
+
+            // Number of frames (50fps) to run in fast mode for quicker loading (e.g., 20 seconds = 20*50)
+            const warpFrames = 20 * 50; // 1000 frames
+
+            // Video mode: 'hd' for sharp graphics, 'tv' for retro scanlines
+            const videoMode = 'hd'; // Change to 'tv' if preferred
+
+            // Optionally hide UI buttons (pause, video) - set to false to hide
+            // const showPauseButton = true;
+            // const showVideoButton = true;
+            // --------------------
+
+            console.log("Initializing RVMPlayer with disk:", dskFileName);
+
+            // Initialize the RVMPlayer for Amstrad CPC 6128 with parameters
+            rvmPlayer_cpc6128(container, {
+                disk: {
+                    type: 'dsk', // Specify the disk type (always 'dsk' for floppy images)
+                    url: dskFileName // URL to your DSK file (relative path if in the same repo)
+                },
+                command: startupCommand, // Startup command to execute
+                warpFrames: warpFrames, // Fast loading frames
+                videoMode: videoMode // Video output mode
+                // pause: showPauseButton, // Uncomment to control pause button visibility
+                // video: showVideoButton   // Uncomment to control video button visibility
+            });
+
+            console.log("RVMPlayer initialization requested.");
+        });
+    </script>
+
 </body>
 </html>
