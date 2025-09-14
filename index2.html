@@ -1,27 +1,1256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>JavaScript Speech Synthesis Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oscillating Audio Normalization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button.audio-button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+        
+        button.turbo-button {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+        }
+        
+        button.emergency-button {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        }
+        
+        button.audio-button.playing {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            animation: pulse 1.5s infinite;
+        }
+        
+        button.turbo-button.active {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            animation: turboPulse 0.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+            50% { box-shadow: 0 4px 25px rgba(78, 205, 196, 0.4); }
+            100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+        }
+        
+        @keyframes turboPulse {
+            0% { box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4); }
+            50% { box-shadow: 0 4px 25px rgba(0, 242, 254, 0.8); }
+            100% { box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4); }
+        }
+        
+        .formula {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            border-left: 4px solid #4ecdc4;
+        }
+        
+        .audio-info {
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            height: 400px;
+            position: relative;
+        }
+        
+        .chart-title {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-weight: 600;
+            color: #4ecdc4;
+            z-index: 10;
+        }
+        
+        .audio-visualizer {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .frequency-bars {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 120px;
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+        
+        .freq-bar {
+            width: 30px;
+            background: linear-gradient(to top, #ff6b6b, #4ecdc4);
+            border-radius: 4px;
+            transition: height 0.3s ease;
+            margin: 0 3px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+        
+        .freq-bar.active {
+            animation: oscillate 0.5s ease-in-out infinite;
+        }
+        
+        .freq-bar.turbo {
+            animation: turboOscillate 0.2s ease-in-out infinite;
+        }
+        
+        @keyframes oscillate {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.2); }
+        }
+        
+        @keyframes turboOscillate {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.4); }
+        }
+        
+        .freq-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+        
+        .data-table {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            background: rgba(79, 172, 254, 0.2);
+            font-weight: 600;
+        }
+        
+        .positive {
+            color: #4ade80;
+        }
+        
+        .negative {
+            color: #f87171;
+        }
+        
+        .frequency-cell {
+            font-family: 'Courier New', monospace;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 4px;
+            padding: 4px 8px;
+        }
+        
+        .insights {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .insights h2 {
+            margin-bottom: 20px;
+            color: #4ecdc4;
+        }
+        
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .insight-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 3px solid #4ecdc4;
+        }
+        
+        .insight-card h3 {
+            margin-bottom: 10px;
+            color: #00f2fe;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            animation: blink 1s infinite;
+        }
+        
+        .status-dot.active {
+            background: #4ecdc4;
+        }
+        
+        .status-dot.turbo {
+            background: #4facfe;
+            animation: turboBlink 0.3s infinite;
+        }
+        
+        .status-dot.warning {
+            background: #fbbf24;
+            animation: warningBlink 0.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes turboBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes warningBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        .amplitude-indicator {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+        
+        .amplitude-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            transition: width 0.3s ease;
+        }
+        
+        .turbo-info {
+            background: rgba(79, 172, 254, 0.1);
+            border: 1px solid rgba(79, 172, 254, 0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+        
+        .buffer-status {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 10px;
+            padding: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 0.8rem;
+            display: none;
+        }
+        
+        .emergency-panel {
+            background: rgba(255, 67, 107, 0.1);
+            border: 1px solid rgba(255, 67, 107, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .visualization-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .frequency-bars {
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding: 0 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Text to Speech Demo</h1>
-  <label for="textToSpeak">Enter text:</label>
-  <input type="text" id="textToSpeak" value="Hello, this is a speech synthesis demo!">
-  <button onclick="speakText()">Speak</button>
+    <div class="container">
+        <h1>Oscillating Audio Normalization</h1>
+        <p class="subtitle">Real-time Born's rule transformation with simultaneous oscillating frequencies</p>
+        
+        <div class="controls">
+            <button onclick="toggleAnimation()">Toggle Animation</button>
+            <button class="audio-button" onclick="toggleAudio()">Audio Normalization Output</button>
+            <button class="turbo-button" onclick="toggleTurbo()">Turbo Mode</button>
+            <button class="emergency-button" onclick="emergencyReset()">Emergency Reset</button>
+        </div>
+        
+        <div class="formula">
+            Normalized Value = (Point Magnitude²) / (Sum of All Magnitudes²)
+        </div>
+        
+        <div class="audio-info">
+            🎵 10 simultaneous oscillators with frequencies mapped from normalized values (200-2000Hz) and amplitudes modulated by pre-normalized magnitudes
+        </div>
+        
+        <div class="turbo-info" id="turboInfo">
+            💡 Turbo Mode: Maximum speed animation and audio updates for intense audio-visual experience
+        </div>
+        
+        <div class="emergency-panel">
+            <strong>⚠️ Emergency Reset:</strong> If animation and audio lock up, click Emergency Reset to clear all buffers and restart the system
+        </div>
+        
+        <div class="buffer-status" id="bufferStatus">
+            ⚠️ Audio buffer cleared
+        </div>
+        
+        <div class="status-indicator">
+            <div class="status-dot" id="animationStatus"></div>
+            <span id="animationStatusText">Animation: Stopped</span>
+            <div class="status-dot" id="audioStatus"></div>
+            <span id="audioStatusText">Audio: Stopped</span>
+            <div class="status-dot" id="turboStatus"></div>
+            <span id="turboStatusText">Turbo: Off</span>
+            <div class="status-dot warning" id="bufferStatusDot" style="display: none;"></div>
+            <span id="bufferStatusText" style="display: none;">Buffer: Clear</span>
+        </div>
+        
+        <div class="visualization-grid">
+            <div class="chart-container">
+                <div class="chart-title">Dynamic Random Points</div>
+                <canvas id="originalChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Real-time Normalized Values</div>
+                <canvas id="normalizedChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="audio-visualizer">
+            <h3 style="text-align: center; margin-bottom: 20px; color: #4ecdc4;">Oscillator Frequencies & Amplitudes</h3>
+            <div class="frequency-bars" id="frequencyBars">
+                <!-- Frequency bars will be generated here -->
+            </div>
+        </div>
+        
+        <div class="data-table">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Point</th>
+                        <th>X</th>
+                        <th>Y</th>
+                        <th>Magnitude²</th>
+                        <th>Normalized</th>
+                        <th>Frequency (Hz)</th>
+                        <th>Amplitude</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="insights">
+            <h2>Real-time Audio-Visual Insights</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <h3>Dynamic Normalization</h3>
+                    <p>As points move continuously, the normalization process creates ever-changing probability distributions, reflected in both visual and audio patterns.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h3>Simultaneous Oscillators</h3>
+                    <p>10 independent oscillators create a complex chord where each voice represents a point's contribution to the overall mathematical pattern.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h3>Amplitude Modulation</h3>
+                    <p>Pre-normalized magnitudes control volume, creating a dynamic balance where significant points dominate the soundscape.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h3>Resilient Audio System</h3>
+                    <p>Advanced error handling ensures audio continues playing even when individual updates fail, providing continuous sound until explicitly stopped.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <script>
-    function speakText() {
-      const text = document.getElementById('textToSpeak').value;
-      const synth = window.speechSynthesis;
-      const utterance = new SpeechSynthesisUtterance(text);
-
-      utterance.onerror = function(event) {
-        console.error('Speech synthesis error:', event.error);
-      };
-
-      synth.speak(utterance);
-    }
-  </script>
+    <script>
+        let originalChart, normalizedChart;
+        let points = [];
+        let audioContext;
+        let oscillators = [];
+        let gainNodes = [];
+        let animationId;
+        let isAnimating = false;
+        let isAudioActive = false;
+        let isTurboMode = false;
+        let lastAudioUpdate = 0;
+        let lastBufferClear = 0;
+        let frameCount = 0;
+        let lastFrameTime = 0;
+        let targetFrameTime = 16; // 60 FPS
+        let previousAudioValues = []; // Store previous values to detect significant changes
+        let scheduledEvents = []; // Track scheduled audio events
+        let audioErrorCount = 0; // Track consecutive audio errors
+        const AUDIO_UPDATE_INTERVAL = 100; // Update audio every 100ms
+        const BUFFER_CLEAR_INTERVAL = 3000; // Clear buffer every 3 seconds
+        const CHANGE_THRESHOLD = 0.02; // Threshold for significant changes
+        const MAX_SCHEDULED_EVENTS = 50; // Maximum number of scheduled events
+        const MAX_AUDIO_ERRORS = 5; // Maximum consecutive errors before stopping audio
+        
+        // Initialize points
+        function initializePoints(count = 10) {
+            const newPoints = [];
+            for (let i = 0; i < count; i++) {
+                newPoints.push({
+                    x: Math.random() * 2 - 1,
+                    y: Math.random() * 2 - 1,
+                    id: String.fromCharCode(65 + i),
+                    targetX: Math.random() * 2 - 1,
+                    targetY: Math.random() * 2 - 1,
+                    speed: isTurboMode ? 0.05 + Math.random() * 0.05 : 0.02 + Math.random() * 0.03
+                });
+            }
+            return newPoints;
+        }
+        
+        // Update points with smooth animation
+        function updatePoints() {
+            points.forEach(point => {
+                // Move towards target
+                point.x += (point.targetX - point.x) * point.speed;
+                point.y += (point.targetY - point.y) * point.speed;
+                
+                // If close to target, set new target
+                if (Math.abs(point.targetX - point.x) < 0.01 && Math.abs(point.targetY - point.y) < 0.01) {
+                    point.targetX = Math.random() * 2 - 1;
+                    point.targetY = Math.random() * 2 - 1;
+                }
+            });
+        }
+        
+        // Calculate transformations
+        function calculateTransformations(points) {
+            const transformed = points.map(point => {
+                const magnitudeSquared = point.x * point.x + point.y * point.y;
+                return {
+                    ...point,
+                    magnitudeSquared: magnitudeSquared,
+                    normalized: 0,
+                    frequency: 0,
+                    amplitude: 0
+                };
+            });
+            
+            const total = transformed.reduce((sum, point) => sum + point.magnitudeSquared, 0);
+            const maxMagnitude = Math.max(...transformed.map(p => p.magnitudeSquared));
+            
+            return transformed.map(point => {
+                const normalized = total > 0 ? point.magnitudeSquared / total : 0;
+                const frequency = 200 + (normalized * 1800); // 200-2000 Hz
+                const amplitude = maxMagnitude > 0 ? 0.2 * (point.magnitudeSquared / maxMagnitude) : 0;
+                
+                return {
+                    ...point,
+                    magnitudeSquared: point.magnitudeSquared.toFixed(4),
+                    normalized: normalized.toFixed(4),
+                    frequency: Math.round(frequency),
+                    amplitude: amplitude.toFixed(3)
+                };
+            });
+        }
+        
+        // Update visualizations
+        function updateVisualizations() {
+            const transformedPoints = calculateTransformations(points);
+            
+            updateTable(transformedPoints);
+            updateFrequencyBars(transformedPoints);
+            updateCharts();
+            
+            // Update audio at controlled interval
+            const now = Date.now();
+            if (isAudioActive && now - lastAudioUpdate > AUDIO_UPDATE_INTERVAL) {
+                updateAudio(transformedPoints);
+                lastAudioUpdate = now;
+            }
+            
+            // Clear audio buffer at intervals
+            if (isTurboMode && isAudioActive && now - lastBufferClear > BUFFER_CLEAR_INTERVAL) {
+                clearAudioBuffer();
+                lastBufferClear = now;
+            }
+        }
+        
+        // Update table
+        function updateTable(transformedPoints) {
+            const tbody = document.querySelector('#dataTable tbody');
+            tbody.innerHTML = '';
+            
+            transformedPoints.forEach(point => {
+                const row = tbody.insertRow();
+                
+                row.insertCell(0).textContent = point.id;
+                
+                const xCell = row.insertCell(1);
+                xCell.textContent = point.x.toFixed(2);
+                xCell.className = point.x >= 0 ? 'positive' : 'negative';
+                
+                const yCell = row.insertCell(2);
+                yCell.textContent = point.y.toFixed(2);
+                yCell.className = point.y >= 0 ? 'positive' : 'negative';
+                
+                row.insertCell(3).textContent = point.magnitudeSquared;
+                row.insertCell(4).textContent = point.normalized;
+                
+                const freqCell = row.insertCell(5);
+                freqCell.textContent = point.frequency + ' Hz';
+                freqCell.className = 'frequency-cell';
+                
+                row.insertCell(6).innerHTML = `
+                    <div class="amplitude-indicator">
+                        <div class="amplitude-bar" style="width: ${point.amplitude * 100}%"></div>
+                    </div>
+                `;
+            });
+        }
+        
+        // Update frequency bars
+        function updateFrequencyBars(transformedPoints) {
+            const container = document.getElementById('frequencyBars');
+            container.innerHTML = '';
+            
+            const maxFreq = Math.max(...transformedPoints.map(p => p.frequency));
+            const minFreq = Math.min(...transformedPoints.map(p => p.frequency));
+            const range = maxFreq - minFreq || 1;
+            
+            transformedPoints.forEach(point => {
+                const barWrapper = document.createElement('div');
+                barWrapper.style.position = 'relative';
+                barWrapper.style.display = 'flex';
+                barWrapper.style.flexDirection = 'column';
+                barWrapper.style.alignItems = 'center';
+                barWrapper.style.margin = '0 3px';
+                
+                const bar = document.createElement('div');
+                bar.className = 'freq-bar';
+                bar.id = `bar-${point.id}`;
+                
+                // Height based on frequency
+                const normalizedHeight = (point.frequency - minFreq) / range;
+                const height = 20 + (normalizedHeight * 80);
+                bar.style.height = height + 'px';
+                
+                // Width based on amplitude
+                bar.style.width = 10 + (point.amplitude * 20) + 'px';
+                
+                // Color based on frequency
+                const ratio = (point.frequency - 200) / 1800;
+                const r = Math.round(255 * ratio);
+                const b = Math.round(255 * (1 - ratio));
+                bar.style.background = `linear-gradient(to top, rgb(${r}, 100, ${b}), rgb(${r}, 150, ${b}))`;
+                
+                if (isAudioActive) {
+                    bar.classList.add('active');
+                    if (isTurboMode) {
+                        bar.classList.add('turbo');
+                    }
+                }
+                
+                const label = document.createElement('div');
+                label.className = 'freq-label';
+                label.textContent = point.id;
+                
+                barWrapper.appendChild(bar);
+                barWrapper.appendChild(label);
+                container.appendChild(barWrapper);
+            });
+        }
+        
+        // Update charts
+        function updateCharts() {
+            // Update original points chart
+            if (originalChart) {
+                originalChart.data.datasets[0].data = points.map(p => ({ x: p.x, y: p.y }));
+                originalChart.update('none');
+            }
+            
+            // Update normalized chart
+            if (normalizedChart) {
+                const transformedPoints = calculateTransformations(points);
+                normalizedChart.data.datasets[0].data = transformedPoints.map(p => parseFloat(p.normalized));
+                
+                // Update colors based on frequency
+                const colors = transformedPoints.map(point => {
+                    const ratio = (point.frequency - 200) / 1800;
+                    const r = Math.round(255 * ratio);
+                    const b = Math.round(255 * (1 - ratio));
+                    return `rgba(${r}, 100, ${b}, 0.7)`;
+                });
+                
+                normalizedChart.data.datasets[0].backgroundColor = colors;
+                normalizedChart.update('none');
+            }
+        }
+        
+        // Initialize audio
+        function initAudio() {
+            if (!audioContext) {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Create oscillators and gain nodes
+                    for (let i = 0; i < 10; i++) {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.type = 'sine';
+                        oscillator.frequency.value = 440; // Default frequency
+                        gainNode.gain.value = 0; // Start silent
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.start();
+                        
+                        oscillators.push(oscillator);
+                        gainNodes.push(gainNode);
+                        
+                        // Initialize previous values array
+                        previousAudioValues.push({
+                            frequency: 440,
+                            amplitude: 0
+                        });
+                    }
+                    
+                    // Initialize scheduled events array
+                    scheduledEvents = new Array(10).fill(null);
+                    
+                    // Reset error count
+                    audioErrorCount = 0;
+                    
+                } catch (error) {
+                    console.error('Error initializing audio context:', error);
+                    showBufferStatus('Audio initialization failed - will retry');
+                }
+            }
+        }
+        
+        // Clear audio buffer to prevent accumulation
+        function clearAudioBuffer() {
+            if (!audioContext || gainNodes.length === 0) return;
+            
+            try {
+                const currentTime = audioContext.currentTime;
+                
+                // Cancel all scheduled events
+                oscillators.forEach((oscillator, index) => {
+                    if (scheduledEvents[index]) {
+                        try {
+                            oscillator.frequency.cancelScheduledValues(currentTime);
+                            gainNodes[index].gain.cancelScheduledValues(currentTime);
+                            scheduledEvents[index] = null;
+                        } catch (e) {
+                            console.log('Error canceling scheduled values:', e);
+                        }
+                    }
+                });
+                
+                // Briefly set all gains to zero to clear buffer
+                gainNodes.forEach((gainNode, index) => {
+                    try {
+                        const currentGain = gainNode.gain.value;
+                        gainNode.setValueAtTime(currentGain, currentTime);
+                        gainNode.setValueAtTime(0.001, currentTime + 0.01);
+                        gainNode.setValueAtTime(currentGain, currentTime + 0.02);
+                    } catch (e) {
+                        console.log('Error clearing gain:', e);
+                    }
+                });
+                
+                // Show buffer cleared notification
+                showBufferStatus('Audio buffer cleared');
+                
+                // Clear previous values to force refresh
+                previousAudioValues.forEach((value, index) => {
+                    if (oscillators[index] && gainNodes[index]) {
+                        previousAudioValues[index] = {
+                            frequency: oscillators[index].frequency.value,
+                            amplitude: gainNodes[index].gain.value
+                        };
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error clearing audio buffer:', error);
+                showBufferStatus('Buffer clear failed');
+            }
+        }
+        
+        // Show buffer status
+        function showBufferStatus(message) {
+            const bufferStatus = document.getElementById('bufferStatus');
+            const bufferStatusDot = document.getElementById('bufferStatusDot');
+            const bufferStatusText = document.getElementById('bufferStatusText');
+            
+            bufferStatus.textContent = `⚠️ ${message}`;
+            bufferStatus.style.display = 'block';
+            bufferStatusDot.style.display = 'inline-block';
+            bufferStatusText.style.display = 'inline';
+            
+            setTimeout(() => {
+                bufferStatus.style.display = 'none';
+                bufferStatusDot.style.display = 'none';
+                bufferStatusText.style.display = 'none';
+            }, 2000);
+        }
+        
+        // Emergency reset function
+        function emergencyReset() {
+            console.log('Emergency reset triggered');
+            
+            // Stop animation
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            isAnimating = false;
+            
+            // Stop audio
+            if (audioContext) {
+                try {
+                    // Stop all oscillators
+                    oscillators.forEach(oscillator => {
+                        try {
+                            oscillator.stop();
+                        } catch (e) {
+                            console.log('Error stopping oscillator:', e);
+                        }
+                    });
+                    
+                    // Close audio context
+                    if (audioContext.state !== 'closed') {
+                        audioContext.close();
+                    }
+                } catch (error) {
+                    console.log('Error closing audio context:', error);
+                }
+            }
+            
+            // Reset all arrays
+            oscillators = [];
+            gainNodes = [];
+            previousAudioValues = [];
+            scheduledEvents = [];
+            audioContext = null;
+            audioErrorCount = 0;
+            
+            // Reset system state
+            isAudioActive = false;
+            isTurboMode = false;
+            
+            // Update UI
+            updateStatusIndicators();
+            
+            // Reinitialize
+            setTimeout(() => {
+                points = initializePoints();
+                updateVisualizations();
+                showBufferStatus('System reset complete');
+            }, 100);
+        }
+        
+        // Update audio frequencies and amplitudes with improved error handling
+        function updateAudio(transformedPoints) {
+            if (!audioContext || oscillators.length === 0) {
+                // Try to reinitialize audio if it failed
+                if (audioErrorCount < MAX_AUDIO_ERRORS) {
+                    initAudio();
+                    return;
+                } else {
+                    // Too many errors, stop trying
+                    return;
+                }
+            }
+            
+            try {
+                const currentTime = audioContext.currentTime;
+                const rampTime = isTurboMode ? 0.05 : 0.1;
+                
+                // Check if we need to clear buffer
+                if (scheduledEvents.filter(event => event !== null).length > MAX_SCHEDULED_EVENTS) {
+                    clearAudioBuffer();
+                    return;
+                }
+                
+                let needsUpdate = false;
+                
+                // Check if any values have changed significantly
+                transformedPoints.forEach((point, index) => {
+                    if (index < previousAudioValues.length) {
+                        const prev = previousAudioValues[index];
+                        const freqChange = Math.abs(point.frequency - prev.frequency);
+                        const ampChange = Math.abs(point.amplitude - prev.amplitude);
+                        
+                        if (freqChange > CHANGE_THRESHOLD || ampChange > CHANGE_THRESHOLD) {
+                            needsUpdate = true;
+                        }
+                    }
+                });
+                
+                if (!needsUpdate) return;
+                
+                // Update audio parameters with proper event management
+                transformedPoints.forEach((point, index) => {
+                    if (oscillators[index] && gainNodes[index]) {
+                        try {
+                            // Cancel previously scheduled events
+                            if (scheduledEvents[index]) {
+                                oscillators[index].frequency.cancelScheduledValues(currentTime);
+                                gainNodes[index].gain.cancelScheduledValues(currentTime);
+                                scheduledEvents[index] = null;
+                            }
+                            
+                            // Store current values
+                            previousAudioValues[index] = {
+                                frequency: point.frequency,
+                                amplitude: point.amplitude
+                            };
+                            
+                            // Schedule new events
+                            oscillators[index].frequency.setValueAtTime(
+                                oscillators[index].frequency.value, 
+                                currentTime
+                            );
+                            oscillators[index].frequency.exponentialRampToValueAtTime(
+                                point.frequency, 
+                                currentTime + rampTime
+                            );
+                            
+                            gainNodes[index].gain.setValueAtTime(
+                                gainNodes[index].gain.value,
+                                currentTime
+                            );
+                            gainNodes[index].gain.exponentialRampToValueAtTime(
+                                point.amplitude, 
+                                currentTime + rampTime
+                            );
+                            
+                            // Mark as scheduled
+                            scheduledEvents[index] = true;
+                            
+                            // Reset error count on successful update
+                            audioErrorCount = 0;
+                            
+                        } catch (error) {
+                            console.error('Error updating audio for oscillator', index, ':', error);
+                            audioErrorCount++;
+                            
+                            if (audioErrorCount >= MAX_AUDIO_ERRORS) {
+                                console.log('Too many audio errors, stopping updates');
+                                // Don't mark as scheduled so we stop trying
+                                scheduledEvents[index] = false;
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error in updateAudio:', error);
+                audioErrorCount++;
+                
+                if (audioErrorCount >= MAX_AUDIO_ERRORS) {
+                    showBufferStatus('Audio updates stopped due to errors');
+                }
+            }
+        }
+        
+        // Update status indicators
+        function updateStatusIndicators() {
+            const animationStatus = document.getElementById('animationStatus');
+            const animationStatusText = document.getElementById('animationStatusText');
+            const audioStatus = document.getElementById('audioStatus');
+            const audioStatusText = document.getElementById('audioStatusText');
+            const turboStatus = document.getElementById('turboStatus');
+            const turboStatusText = document.getElementById('turboStatusText');
+            
+            if (isAnimating) {
+                animationStatus.classList.add('active');
+                animationStatusText.textContent = 'Animation: Running';
+            } else {
+                animationStatus.classList.remove('active');
+                animationStatusText.textContent = 'Animation: Stopped';
+            }
+            
+            if (isAudioActive) {
+                audioStatus.classList.add('active');
+                audioStatusText.textContent = 'Audio: Active';
+            } else {
+                audioStatus.classList.remove('active');
+                audioStatusText.textContent = 'Audio: Stopped';
+            }
+            
+            if (isTurboMode) {
+                turboStatus.classList.add('turbo');
+                turboStatusText.textContent = 'Turbo: On';
+            } else {
+                turboStatus.classList.remove('turbo');
+                turboStatusText.textContent = 'Turbo: Off';
+            }
+        }
+        
+        // Toggle animation
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+            
+            if (isAnimating) {
+                if (!animationId) {
+                    lastFrameTime = performance.now();
+                    animate();
+                }
+            } else {
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+            }
+            
+            updateStatusIndicators();
+        }
+        
+        // Toggle audio
+        function toggleAudio() {
+            isAudioActive = !isAudioActive;
+            const button = event.target;
+            
+            if (isAudioActive) {
+                initAudio();
+                
+                // Start audio updates
+                const transformedPoints = calculateTransformations(points);
+                updateAudio(transformedPoints);
+                lastAudioUpdate = Date.now();
+                
+                // Update frequency bars animation
+                document.querySelectorAll('.freq-bar').forEach(bar => {
+                    bar.classList.add('active');
+                    if (isTurboMode) {
+                        bar.classList.add('turbo');
+                    }
+                });
+                
+                button.classList.add('playing');
+                button.textContent = 'Stop Audio';
+            } else {
+                // Stop audio
+                if (gainNodes.length > 0) {
+                    try {
+                        gainNodes.forEach(gainNode => {
+                            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+                        });
+                    } catch (error) {
+                        console.log('Error stopping audio:', error);
+                    }
+                }
+                
+                // Remove animation from frequency bars
+                document.querySelectorAll('.freq-bar').forEach(bar => {
+                    bar.classList.remove('active');
+                    bar.classList.remove('turbo');
+                });
+                
+                button.classList.remove('playing');
+                button.textContent = 'Audio Normalization Output';
+            }
+            
+            updateStatusIndicators();
+        }
+        
+        // Toggle turbo mode
+        function toggleTurbo() {
+            isTurboMode = !isTurboMode;
+            const button = event.target;
+            const turboInfo = document.getElementById('turboInfo');
+            
+            if (isTurboMode) {
+                // Increase point movement speed
+                points.forEach(point => {
+                    point.speed = 0.05 + Math.random() * 0.05;
+                });
+                
+                // Add turbo animation to frequency bars
+                if (isAudioActive) {
+                    document.querySelectorAll('.freq-bar').forEach(bar => {
+                        bar.classList.add('turbo');
+                    });
+                }
+                
+                button.classList.add('active');
+                button.textContent = 'Turbo Mode: ON';
+                turboInfo.style.display = 'block';
+            } else {
+                // Reset point movement speed
+                points.forEach(point => {
+                    point.speed = 0.02 + Math.random() * 0.03;
+                });
+                
+                // Remove turbo animation from frequency bars
+                document.querySelectorAll('.freq-bar').forEach(bar => {
+                    bar.classList.remove('turbo');
+                });
+                
+                button.classList.remove('active');
+                button.textContent = 'Turbo Mode';
+                turboInfo.style.display = 'none';
+            }
+            
+            updateStatusIndicators();
+        }
+        
+        // Animation loop with frame rate control
+        function animate() {
+            if (!isAnimating) return;
+            
+            const currentTime = performance.now();
+            const deltaTime = currentTime - lastFrameTime;
+            
+            // Control frame rate
+            if (deltaTime >= targetFrameTime) {
+                updatePoints();
+                updateVisualizations();
+                
+                frameCount++;
+                lastFrameTime = currentTime - (deltaTime % targetFrameTime);
+            }
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            // Original points chart
+            const origCtx = document.getElementById('originalChart').getContext('2d');
+            originalChart = new Chart(origCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Dynamic Points',
+                        data: points.map(p => ({ x: p.x, y: p.y })),
+                        backgroundColor: 'rgba(78, 205, 196, 0.7)',
+                        borderColor: 'rgba(78, 205, 196, 1)',
+                        borderWidth: 2,
+                        pointRadius: 8,
+                        pointHoverRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'center',
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#fff'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'center',
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Normalized values chart
+            const normCtx = document.getElementById('normalizedChart').getContext('2d');
+            normalizedChart = new Chart(normCtx, {
+                type: 'bar',
+                data: {
+                    labels: points.map(p => p.id),
+                    datasets: [{
+                        label: 'Normalized Values',
+                        data: points.map(() => 0),
+                        backgroundColor: 'rgba(78, 205, 196, 0.7)',
+                        borderColor: 'rgba(78, 205, 196, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#fff'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize on load
+        window.onload = function() {
+            points = initializePoints();
+            initCharts();
+            updateVisualizations();
+        };
+    </script>
 </body>
 </html>
